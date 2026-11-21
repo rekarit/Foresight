@@ -1,0 +1,14 @@
+node_modules/
+package-lock.json
+package.json
+*.txt
+pages.json
+all_raw_pages.json
+extracted_events_summary.json
+conference.pdf
+dump_pages.js
+extract.js
+parse_all_pages.js
+parse_pages_to_json.js
+read_all.js
+summarize_events.js
