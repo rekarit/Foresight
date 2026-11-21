@@ -1,155 +1,141 @@
 /**
- * Foresight Conferences & Exhibitions - Complete Interactive Engine
- * Renders full PDF-fidelity cards with embedded photos, SVG flags, 3-column metadata,
- * target audience lists, Foresight visa boxes, direct links, table index view, and auto-expiration.
+ * Foresight Conferences & Exhibitions - Main Engine
+ * Clean, responsive, bilingual (KU/EN), dark/light mode, PDF-data accurate.
  */
 
 (function () {
   'use strict';
 
-  // Ensure events dataset is loaded
   const getEvents = () => window.FORESIGHT_EVENTS || (typeof FORESIGHT_EVENTS !== 'undefined' ? FORESIGHT_EVENTS : []);
 
   // --- STATE ---
   let currentLang = localStorage.getItem('foresight_lang') || 'ku';
-  let activeTab = 'all'; // 'all', 'medical', 'non-medical', 'upcoming', 'expired'
+  let currentTheme = localStorage.getItem('foresight_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  let activeTab = 'all';
   let selectedCountry = 'all';
   let selectedMonthYear = 'all';
-  let sortBy = 'date-asc'; // 'date-asc', 'date-desc', 'pdf-order', 'title'
-  let viewMode = 'cards'; // 'cards' (2-col full PDF cards), 'single' (1-col large PDF page view), 'table' (PDF page 2/3 index table)
+  let sortBy = 'pdf-order';
+  let viewMode = 'cards';
   let searchQuery = '';
   let activeModalEventId = null;
 
-  // --- I18N DICTIONARY ---
+  // --- TRANSLATIONS ---
   const i18n = {
     ku: {
-      siteTitle: "کۆنفرانس و پێشانگاکانی فۆرسایت | FORESIGHT Visa Consultancy & Academic Services",
-      brandName: "FORESIGHT",
+      siteTitle: "کۆنفرانس و پێشانگاکانی فۆرسایت | FORESIGHT",
       brandTagline: "ڕاوێژکاریی ڤیزا و خزمەتگوزارییە ئەکادیمییەکان",
-      heroBadge: "ڕێبەری فەرمیی کۆنفرانس و پێشانگا نێودەوڵەتییەکان ٢٠٢٦ – ٢٠٢٧",
-      heroTitle: "پێرستی گشتیی <span>کۆنفرانس و پێشانگا</span> جیهانییەکان",
-      heroSubtitle: "تەواوی زانیاری، وێنە، بەروار، شوێنی بەڕێوەچوون، گرووپی بەشداربووان و لینکی فەرمیی ٤٢ کۆنفرانس و پێشانگای پزیشکی، ئەندازیاری، تەکنەلۆژی و بازرگانی بە سەرپەرشتیی فۆرسایت.",
-      statTotal: "کۆی گشتیی کۆنفرانسەکان",
-      statMedical: "کۆنفرانسی پزیشکی و ددانسازی",
-      statTech: "پێشانگای ئەندازیاری و بازرگانی",
-      statCountries: "وڵاتی جیاواز",
-      searchPlaceholder: "گەڕان بەپێی ناوی کۆنفرانس، وڵات، شار، بواری پسپۆڕی یان شوێن...",
-      viewCards: "کارتە تەواوەکان",
-      viewSingle: "پەڕەی گەورە (PDF)",
-      viewTable: "پێرستی گشتی (خشتە)",
-      tabAll: "هەموو کۆنفرانسەکان",
-      tabMedical: "بەشی یەکەم: پزیشکی و ددانسازی",
-      tabTech: "بەشی دووەم: ئەندازیاری، بازرگانی و تەکنەلۆژی",
-      tabUpcoming: "بەردەستەکان (داهاتوو)",
+      heroBadge: "ڕێبەری کۆنفرانس و پێشانگا نێودەوڵەتییەکان ٢٠٢٦ – ٢٠٢٧",
+      heroTitle: "پێرستی گشتیی کۆنفرانس و پێشانگاکان",
+      statTotal: "کۆی گشتی",
+      statMedical: "پزیشکی",
+      statTech: "ئەندازیاری و بازرگانی",
+      statCountries: "وڵات",
+      searchPlaceholder: "گەڕان بەپێی ناوی کۆنفرانس، وڵات، شار یان بوار...",
+      viewCards: "کارتەکان",
+      viewSingle: "پەڕە",
+      viewTable: "پێرست",
+      tabAll: "هەمووی",
+      tabMedical: "بەشی یەکەم: پزیشکی",
+      tabTech: "بەشی دووەم: ئەندازیاری و بازرگانی",
+      tabUpcoming: "بەردەستەکان",
       tabExpired: "بەسەرچووەکان",
-      filterCountryLabel: "فلتەر بەپێی وڵات",
+      filterCountryLabel: "وڵات",
       filterCountryAll: "هەموو وڵاتەکان",
-      filterDateLabel: "فلتەر بەپێی مانگ و ساڵ",
-      filterDateAll: "هەموو مانگ و ساڵەکان",
-      filterSortLabel: "ڕیزبەندکردن",
-      sortPdfOrder: "ڕیزبەندیی پیدیئێفەکە",
+      filterDateLabel: "مانگ و ساڵ",
+      filterDateAll: "هەموو مانگەکان",
+      filterSortLabel: "ڕیزبەندی",
+      sortPdfOrder: "ڕیزبەندیی پیدیئێف",
       sortDateAsc: "نزیکترین بەروار",
       sortDateDesc: "دوورترین بەروار",
-      sortTitle: "بەپێی ئەلفوبێ",
-      resetFilters: "سڕینەوەی فلتەرەکان",
-      resultsCount: "ژمارەی کۆنفرانسە پیشاندراوەکان:",
-      eventsWord: "کۆنفرانس و پێشانگا",
-      badgeMedical: "پزیشکی و ددانسازی",
+      sortTitle: "ئەلفوبێ",
+      resetFilters: "سڕینەوەی فلتەر",
+      resultsCount: "ئەنجام:",
+      eventsWord: "کۆنفرانس",
+      badgeMedical: "پزیشکی",
       badgeTech: "ئەندازیاری و بازرگانی",
       statusUpcoming: "بەردەستە",
       statusExpired: "بەسەرچووە",
-      daysLeft: "ڕۆژی ماوە",
       metaCountryCity: "وڵات و شار",
       metaDate: "بەرواری کۆنفرانس",
       metaVenue: "شوێنی بەڕێوەچوون",
-      metaTicket: "تکت و تۆمارکردن:",
       audienceHeading: "تایبەتە بە کێ؟",
       officialSiteBtn: "سەردانی ماڵپەڕی فەرمی",
-      ticketLinkBtn: "لینکی تکت / تۆمارکردن",
-      visaFormBtn: "فۆرمی بانگهێشتنامە",
-      expandCardBtn: "پیشاندان بە گەورەیی",
+      ticketLinkBtn: "زانیاریی زیاتر / تۆمارکردن",
+      expandCardBtn: "پیشاندانی تەواو",
       shareBtn: "کۆپیکردنی بەستەر",
-      copiedNotice: "بەستەری کۆنفرانسەکە کۆپی کرا!",
-      tableColPage: "ژمارە",
+      copiedNotice: "بەستەری کۆنفرانسەکە کۆپی کرا",
+      tableColPage: "لاپەڕە",
       tableColName: "ناوی کۆنفرانس / پێشانگا",
       tableColLocation: "وڵات و شار",
       tableColDate: "بەروار",
       tableColStatus: "دۆخ",
-      tableColLinks: "لینکی فەرمی",
+      tableColLinks: "ماڵپەڕی فەرمی",
       emptyTitle: "هیچ کۆنفرانسێک نەدۆزرایەوە",
-      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان ڕێکبخەرەوە بۆ بینینی هەموو کۆنفرانسەکان.",
-      footerDesc: "FORESIGHT — Visa Consultancy & Academic Services: سەرپەرشتیی تەواوی ڕێکارەکانی تۆمارکردن لە کۆنفرانس و پێشانگا نێودەوڵەتییەکان، وەرگرتنی بانگهێشتنامەی فەرمی و ڕێکخستنی فایلی ڤیزای شنگن، بەریتانیا، کەنەدا و ئەمریکا.",
+      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان لابدە.",
+      footerDesc: "سەرپەرشتیی تەواوی ڕێکارەکانی تۆمارکردن لە کۆنفرانس و پێشانگا نێودەوڵەتییەکان، وەرگرتنی بانگهێشتنامەی فەرمی و ڕێکخستنی فایلی ڤیزا.",
       footerRights: "سەرجەم مافەکان پارێزراوە بۆ FORESIGHT © 2026–2027"
     },
     en: {
-      siteTitle: "FORESIGHT Conferences & Exhibitions | Visa Consultancy & Academic Services",
-      brandName: "FORESIGHT",
+      siteTitle: "FORESIGHT Conferences & Exhibitions",
       brandTagline: "Visa Consultancy & Academic Services",
-      heroBadge: "Official International Conferences & Exhibitions Guide 2026 – 2027",
-      heroTitle: "General Directory of <span>Global Conferences & Expos</span>",
-      heroSubtitle: "Complete official information, photos, dates, venues, target audiences, and direct official links for 42 medical, dental, engineering, technology, and trade exhibitions supervised by Foresight.",
-      statTotal: "Total Conferences",
-      statMedical: "Medical & Dental",
-      statTech: "Engineering, Tech & Trade",
+      heroBadge: "International Conferences & Exhibitions Guide 2026 – 2027",
+      heroTitle: "General Directory of Conferences & Exhibitions",
+      statTotal: "Total",
+      statMedical: "Medical",
+      statTech: "Engineering & Trade",
       statCountries: "Countries",
-      searchPlaceholder: "Search by conference name, country, city, specialty, or venue...",
-      viewCards: "Full Detail Cards",
-      viewSingle: "Large Page View",
-      viewTable: "General Index Table",
-      tabAll: "All Conferences",
-      tabMedical: "Part 1: Medical & Dental",
-      tabTech: "Part 2: Engineering, Trade & Tech",
-      tabUpcoming: "Active / Upcoming",
-      tabExpired: "Past / Expired",
-      filterCountryLabel: "Filter by Country",
+      searchPlaceholder: "Search by conference name, country, city, or field...",
+      viewCards: "Cards",
+      viewSingle: "Page",
+      viewTable: "Index",
+      tabAll: "All",
+      tabMedical: "Part 1: Medical",
+      tabTech: "Part 2: Engineering & Trade",
+      tabUpcoming: "Active",
+      tabExpired: "Expired",
+      filterCountryLabel: "Country",
       filterCountryAll: "All Countries",
-      filterDateLabel: "Filter by Month & Year",
-      filterDateAll: "All Months & Years",
-      filterSortLabel: "Sort Order",
-      sortPdfOrder: "Original PDF Order",
-      sortDateAsc: "Soonest Date First",
-      sortDateDesc: "Latest Date First",
+      filterDateLabel: "Month & Year",
+      filterDateAll: "All Months",
+      filterSortLabel: "Sort",
+      sortPdfOrder: "PDF Order",
+      sortDateAsc: "Soonest Date",
+      sortDateDesc: "Latest Date",
       sortTitle: "Alphabetical",
-      resetFilters: "Reset Filters",
-      resultsCount: "Showing Conferences:",
-      eventsWord: "conferences & exhibitions",
-      badgeMedical: "Medical & Dental",
+      resetFilters: "Reset",
+      resultsCount: "Showing:",
+      eventsWord: "conferences",
+      badgeMedical: "Medical",
       badgeTech: "Engineering & Trade",
-      statusUpcoming: "Active / Open",
-      statusExpired: "Expired / Past",
-      daysLeft: "days left",
+      statusUpcoming: "Active",
+      statusExpired: "Expired",
       metaCountryCity: "Country & City",
       metaDate: "Conference Date",
       metaVenue: "Venue",
-      metaTicket: "Tickets & Registration:",
       audienceHeading: "Who Should Attend?",
-      officialSiteBtn: "Official Website",
-      ticketLinkBtn: "Tickets / Registration",
-      visaFormBtn: "Visa Invitation Form",
+      officialSiteBtn: "Visit Official Website",
+      ticketLinkBtn: "Information / Registration",
       expandCardBtn: "Full View",
       shareBtn: "Copy Link",
-      copiedNotice: "Conference link copied to clipboard!",
-      tableColPage: "#",
+      copiedNotice: "Event link copied",
+      tableColPage: "Page",
       tableColName: "Conference / Exhibition Name",
       tableColLocation: "Country & City",
-      tableColDate: "Dates",
+      tableColDate: "Date",
       tableColStatus: "Status",
       tableColLinks: "Official Link",
       emptyTitle: "No Matching Conferences Found",
-      emptyDesc: "Try changing your search query or resetting the filters to see all 42 conferences.",
-      footerDesc: "FORESIGHT — Visa Consultancy & Academic Services: Complete supervision of international conference registration, official invitation letter acquisition, and Schengen, UK, Canada & USA visa dossier preparation.",
+      emptyDesc: "Try adjusting your search or resetting the filters.",
+      footerDesc: "Complete supervision of international conference registration, official invitation letter retrieval, and visa dossier preparation.",
       footerRights: "All Rights Reserved © FORESIGHT 2026–2027"
     }
   };
 
-  // --- DATE & EXPIRATION LOGIC ---
+  // --- HELPERS ---
   function getEventStatus(event) {
     const now = new Date();
     const end = new Date((event.endDate || event.startDate) + 'T23:59:59');
-    const start = new Date(event.startDate + 'T00:00:00');
-    const isExpired = end < now;
-    const diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-    return { isExpired, diffDays };
+    return { isExpired: end < now };
   }
 
   function getMonthYearKey(dateStr) {
@@ -164,24 +150,15 @@
     const mNum = parseInt(month, 10);
     const monthNamesEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthNamesKu = [
-      "مانگی ١ (کانوونی دووەم / Jan)",
-      "مانگی ٢ (شوبات / Feb)",
-      "مانگی ٣ (ئازار / Mar)",
-      "مانگی ٤ (نیسان / Apr)",
-      "مانگی ٥ (ئایار / May)",
-      "مانگی ٦ (حوزەیران / Jun)",
-      "مانگی ٧ (تەممووز / Jul)",
-      "مانگی ٨ (ئاب / Aug)",
-      "مانگی ٩ (ئەیلوول / Sep)",
-      "مانگی ١٠ (تشرینی یەکەم / Oct)",
-      "مانگی ١١ (تشرینی دووەم / Nov)",
-      "مانگی ١٢ (کانوونی یەکەم / Dec)"
+      "کانوونی دووەم (١)", "شوبات (٢)", "ئازار (٣)", "نیسان (٤)",
+      "ئایار (٥)", "حوزەیران (٦)", "تەممووز (٧)", "ئاب (٨)",
+      "ئەیلوول (٩)", "تشرینی یەکەم (١٠)", "تشرینی دووەم (١١)", "کانوونی یەکەم (١٢)"
     ];
     return lang === 'ku' ? `${monthNamesKu[mNum - 1]} ${year}` : `${monthNamesEn[mNum - 1]} ${year}`;
   }
 
-  // --- DOM REFERENCES ---
   const elements = {
+    themeBtn: document.getElementById('themeToggleBtn'),
     langBtn: document.getElementById('langToggleBtn'),
     langText: document.getElementById('langText'),
     searchInput: document.getElementById('searchInput'),
@@ -202,14 +179,20 @@
     backToTop: document.getElementById('backToTopBtn')
   };
 
-  // --- INITIALIZE ---
   function init() {
+    setTheme(currentTheme);
     setLanguage(currentLang, false);
     populateFilterDropdowns();
     renderStatistics();
     bindEvents();
     applyFiltersAndRender();
     checkUrlHash();
+  }
+
+  function setTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem('foresight_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
   }
 
   function setLanguage(lang, rerender = true) {
@@ -219,7 +202,7 @@
     document.body.dir = lang === 'ku' ? 'rtl' : 'ltr';
 
     if (elements.langText) {
-      elements.langText.textContent = lang === 'ku' ? 'English' : 'کوردی';
+      elements.langText.textContent = lang === 'ku' ? 'EN' : 'کوردی';
     }
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -245,7 +228,6 @@
     if (!events.length) return;
     const t = i18n[currentLang];
 
-    // Countries
     const countriesMap = new Map();
     events.forEach(e => {
       const name = currentLang === 'ku' ? e.country_ku : e.country_en;
@@ -265,7 +247,6 @@
       });
     elements.countrySelect.value = prevCountry;
 
-    // Months & Years
     const monthCounts = new Map();
     events.forEach(e => {
       const k = getMonthYearKey(e.startDate);
@@ -317,7 +298,6 @@
     const events = getEvents();
     let list = [...events];
 
-    // 1. Tab Filter
     if (activeTab === 'medical') {
       list = list.filter(e => e.category === 'medical');
     } else if (activeTab === 'non-medical') {
@@ -328,17 +308,14 @@
       list = list.filter(e => getEventStatus(e).isExpired);
     }
 
-    // 2. Country Filter
     if (selectedCountry !== 'all') {
       list = list.filter(e => e.country_en === selectedCountry);
     }
 
-    // 3. Month/Year Filter
     if (selectedMonthYear !== 'all') {
       list = list.filter(e => getMonthYearKey(e.startDate) === selectedMonthYear);
     }
 
-    // 4. Search Filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter(e => {
@@ -353,8 +330,9 @@
       });
     }
 
-    // 5. Sort
-    if (sortBy === 'date-asc') {
+    if (sortBy === 'pdf-order') {
+      list.sort((a, b) => (a.pdfPage || 999) - (b.pdfPage || 999));
+    } else if (sortBy === 'date-asc') {
       list.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     } else if (sortBy === 'date-desc') {
       list.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
@@ -390,35 +368,30 @@
     }
   }
 
-  // --- BUILD CARD HTML (EXACT PDF PAGE FIDELITY + ALL LINKS) ---
   function buildCardInnerHtml(e, isModal = false) {
     const t = i18n[currentLang];
-    const { isExpired, diffDays } = getEventStatus(e);
+    const { isExpired } = getEventStatus(e);
 
     const country = currentLang === 'ku' ? e.country_ku : e.country_en;
     const city = currentLang === 'ku' ? e.city_ku : e.city_en;
     const title = currentLang === 'ku' ? e.title_ku : e.title_en;
     const headline = currentLang === 'ku' ? e.headline_ku : e.headline_en;
     const overview = currentLang === 'ku' ? e.overview_ku : e.overview_en;
-    const field = currentLang === 'ku' ? e.field_ku : e.field_en;
     const audience = currentLang === 'ku' ? e.audience_ku : e.audience_en;
     const foresightTitle = currentLang === 'ku' ? e.foresight_title_ku : e.foresight_title_en;
     const foresightText = currentLang === 'ku' ? e.foresight_ku : e.foresight_en;
-    const ticketPrice = currentLang === 'ku' ? e.ticketPrice_ku : e.ticketPrice_en;
-    const deadline = currentLang === 'ku' ? e.deadline_ku : e.deadline_en;
 
     const statusBadgeHtml = isExpired
-      ? `<span class="status-pill expired">⏱ ${t.statusExpired}</span>`
-      : `<span class="status-pill active">● ${t.statusUpcoming}${diffDays > 0 ? ` (${diffDays} ${t.daysLeft})` : ''}</span>`;
+      ? `<span class="status-pill expired">${t.statusExpired}</span>`
+      : `<span class="status-pill active">${t.statusUpcoming}</span>`;
 
     const categoryBadgeHtml = e.category === 'medical'
-      ? `<span class="cat-pill medical">🩺 ${t.badgeMedical}</span>`
-      : `<span class="cat-pill non-medical">🏗️ ${t.badgeTech}</span>`;
+      ? `<span class="cat-pill medical">${t.badgeMedical}</span>`
+      : `<span class="cat-pill non-medical">${t.badgeTech}</span>`;
 
     const audienceBulletsHtml = (audience || []).map(item => `<li><span>${item}</span></li>`).join('');
 
     return `
-      <!-- Top Bar: Country Flag & City + Date & Status Badges -->
       <div class="pdf-card-topbar">
         <div class="country-flag-pill">
           <img src="${e.flagImg}" alt="${country}" class="country-flag-img" loading="lazy" />
@@ -427,28 +400,22 @@
         <div class="top-badges-wrap">
           ${categoryBadgeHtml}
           ${statusBadgeHtml}
-          <span class="date-pill-badge">📅 ${e.dateText_en}</span>
+          <span class="date-pill-badge">${e.dateText_en}</span>
         </div>
       </div>
 
       <div class="pdf-card-content">
-        <!-- Titles & Visa Headline (Exact from PDF) -->
-        <div class="pdf-title-group">
+        <div>
           <div class="pdf-small-title">${title}</div>
           <h3 class="pdf-big-headline">${headline}</h3>
         </div>
 
         <p class="pdf-overview-text">${overview}</p>
 
-        <!-- High-Res Conference Photo Banner (Extracted from PDF) -->
-        <div class="pdf-photo-banner" style="${isModal ? 'height: 240px;' : ''}">
+        <div class="pdf-photo-banner">
           <img src="${e.image}" alt="${title}" loading="lazy" />
-          <div class="photo-field-overlay">
-            <span class="photo-field-tag">📌 ${field}</span>
-          </div>
         </div>
 
-        <!-- 3-Column Official Metadata Box (وڵات و شار | بەرواری کۆنفرانس | شوێنی بەڕێوەچوون) -->
         <div class="pdf-meta-grid">
           <div class="pdf-meta-col">
             <span class="pdf-meta-label">${t.metaCountryCity}</span>
@@ -464,20 +431,6 @@
           </div>
         </div>
 
-        ${ticketPrice ? `
-          <div class="pdf-ticket-bar">
-            <div><strong>🎟️ ${t.metaTicket}</strong> ${ticketPrice}</div>
-            ${e.contactInfo ? `<div style="margin-top:0.2rem;"><strong>📩 Contact:</strong> <span dir="ltr">${e.contactInfo}</span></div>` : ''}
-          </div>
-        ` : ''}
-
-        ${deadline ? `
-          <div class="pdf-deadline-alert">
-            ⚠️ ${deadline}
-          </div>
-        ` : ''}
-
-        <!-- "تایبەتە بە کێ؟" (Target Audience Box - Exact from PDF) -->
         <div class="pdf-audience-box">
           <div class="pdf-box-heading">
             <span class="teal-dot"></span>
@@ -488,17 +441,15 @@
           </ul>
         </div>
 
-        <!-- "سەرپەرشتیی فۆرسایت" (Teal Supervision Box - Exact from PDF) -->
         <div class="pdf-foresight-box">
-          <div class="pdf-foresight-title">🛡️ ${foresightTitle}</div>
+          <div class="pdf-foresight-title">${foresightTitle}</div>
           <div class="pdf-foresight-text">${foresightText}</div>
         </div>
 
-        <!-- Direct Clickable Official Links -->
         <div class="pdf-card-actions">
           <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-official-primary">
-            <span>🌐 ${t.officialSiteBtn}</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <span>${t.officialSiteBtn}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
               <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -506,20 +457,14 @@
           </a>
 
           ${e.ticketUrl && e.ticketUrl !== e.officialUrl ? `
-            <a href="${e.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-ticket-link">
-              <span>🎟️ ${t.ticketLinkBtn}</span>
-            </a>
-          ` : ''}
-
-          ${e.visaUrl ? `
-            <a href="${e.visaUrl}" target="_blank" rel="noopener noreferrer" class="btn-ticket-link">
-              <span>🛂 ${t.visaFormBtn}</span>
+            <a href="${e.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary-link">
+              <span>${t.ticketLinkBtn}</span>
             </a>
           ` : ''}
 
           ${!isModal ? `
             <button class="btn-modal-expand" data-id="${e.id}">
-              <span>🔍 ${t.expandCardBtn}</span>
+              <span>${t.expandCardBtn}</span>
             </button>
           ` : ''}
         </div>
@@ -539,40 +484,38 @@
     });
   }
 
-  // --- RENDER GENERAL INDEX TABLE (LIKE PAGES 2 & 3 OF PDF) ---
   function renderIndexTable(events) {
     const t = i18n[currentLang];
-    const rowsHtml = events.map((e, idx) => {
+    const rowsHtml = events.map(e => {
       const { isExpired } = getEventStatus(e);
       const title = currentLang === 'ku' ? e.title_ku : e.title_en;
       const country = currentLang === 'ku' ? e.country_ku : e.country_en;
       const city = currentLang === 'ku' ? e.city_ku : e.city_en;
       const statusHtml = isExpired
-        ? `<span class="status-pill expired">⏱ ${t.statusExpired}</span>`
-        : `<span class="status-pill active">● ${t.statusUpcoming}</span>`;
+        ? `<span class="status-pill expired">${t.statusExpired}</span>`
+        : `<span class="status-pill active">${t.statusUpcoming}</span>`;
 
       return `
         <tr>
-          <td><strong>${idx + 1}</strong></td>
+          <td><strong>${e.pdfPage || '-'}</strong></td>
           <td>
-            <div style="font-weight: 800; color: #0f172a; cursor: pointer;" class="table-row-trigger" data-id="${e.id}">${title}</div>
-            <div style="font-size: 0.78rem; color: #64748b;">${currentLang === 'ku' ? e.field_ku : e.field_en}</div>
+            <div style="font-weight: 700; color: var(--text-primary); cursor: pointer;" class="table-row-trigger" data-id="${e.id}">${title}</div>
           </td>
           <td>
             <div class="table-flag-cell">
-              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" style="width:28px;height:19px;" />
+              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" style="width:24px;height:16px;" />
               <span>${country} — ${city}</span>
             </div>
           </td>
-          <td dir="ltr" style="font-weight: 700;">${e.dateText_en}</td>
+          <td dir="ltr" style="font-weight: 600;">${e.dateText_en}</td>
           <td>${statusHtml}</td>
           <td>
-            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <div style="display:flex; gap:0.4rem;">
               <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="table-link-btn">
-                🌐 ${t.officialSiteBtn}
+                ${t.officialSiteBtn}
               </a>
-              <button class="btn-modal-expand" style="padding:0.35rem 0.65rem; font-size:0.78rem;" data-id="${e.id}">
-                🔍
+              <button class="btn-modal-expand" style="padding:0.32rem 0.6rem; font-size:0.78rem;" data-id="${e.id}">
+                ${t.expandCardBtn}
               </button>
             </div>
           </td>
@@ -599,7 +542,6 @@
     `;
   }
 
-  // --- MODAL VIEW ---
   function openModal(id) {
     const events = getEvents();
     const event = events.find(e => e.id === id);
@@ -611,21 +553,17 @@
 
     elements.modalContent.innerHTML = `
       <div class="modal-header">
-        <div style="font-weight:800; color:var(--foresight-teal); font-size:0.95rem;">
-          FORESIGHT — Visa Consultancy & Academic Services
+        <div style="font-weight:700; color:var(--accent); font-size:0.9rem;">
+          FORESIGHT — ${currentLang === 'ku' ? 'لاپەڕە' : 'Page'} ${event.pdfPage}
         </div>
         <button class="modal-close-btn" id="modalCloseBtnInner" aria-label="Close">✕</button>
       </div>
-      <div class="modal-body" style="padding:0;">
+      <div class="modal-body">
         ${buildCardInnerHtml(event, true)}
       </div>
       <div class="modal-footer">
-        <button class="btn-modal-expand" id="shareEventBtn">
-          🔗 ${t.shareBtn}
-        </button>
-        <button class="btn-modal-expand" id="modalCloseFooterBtn">
-          ✕
-        </button>
+        <button class="btn-modal-expand" id="shareEventBtn">${t.shareBtn}</button>
+        <button class="btn-modal-expand" id="modalCloseFooterBtn">✕</button>
       </div>
     `;
 
@@ -661,7 +599,7 @@
     if (!elements.toast) return;
     elements.toast.textContent = msg;
     elements.toast.classList.add('show');
-    setTimeout(() => elements.toast.classList.remove('show'), 2600);
+    setTimeout(() => elements.toast.classList.remove('show'), 2500);
   }
 
   function checkUrlHash() {
@@ -672,8 +610,13 @@
     }
   }
 
-  // --- BIND EVENTS ---
   function bindEvents() {
+    if (elements.themeBtn) {
+      elements.themeBtn.addEventListener('click', () => {
+        setTheme(currentTheme === 'light' ? 'dark' : 'light');
+      });
+    }
+
     if (elements.langBtn) {
       elements.langBtn.addEventListener('click', () => {
         setLanguage(currentLang === 'ku' ? 'en' : 'ku');
@@ -735,12 +678,12 @@
         activeTab = 'all';
         selectedCountry = 'all';
         selectedMonthYear = 'all';
-        sortBy = 'date-asc';
+        sortBy = 'pdf-order';
         searchQuery = '';
         if (elements.searchInput) elements.searchInput.value = '';
         if (elements.countrySelect) elements.countrySelect.value = 'all';
         if (elements.monthYearSelect) elements.monthYearSelect.value = 'all';
-        if (elements.sortSelect) elements.sortSelect.value = 'date-asc';
+        if (elements.sortSelect) elements.sortSelect.value = 'pdf-order';
         document.querySelectorAll('.pill-btn').forEach(b => {
           b.classList.toggle('active', b.getAttribute('data-tab') === 'all');
         });
