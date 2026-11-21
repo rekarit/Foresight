@@ -1,133 +1,155 @@
 /**
- * Foresight Conferences & Exhibitions - Main Interactive Engine
- * Handles bilingual state, dynamic date expiration, filtering, search, and details modal.
+ * Foresight Conferences & Exhibitions - Complete Interactive Engine
+ * Renders full PDF-fidelity cards with embedded photos, SVG flags, 3-column metadata,
+ * target audience lists, Foresight visa boxes, direct links, table index view, and auto-expiration.
  */
 
 (function () {
   'use strict';
+
+  // Ensure events dataset is loaded
+  const getEvents = () => window.FORESIGHT_EVENTS || (typeof FORESIGHT_EVENTS !== 'undefined' ? FORESIGHT_EVENTS : []);
 
   // --- STATE ---
   let currentLang = localStorage.getItem('foresight_lang') || 'ku';
   let activeTab = 'all'; // 'all', 'medical', 'non-medical', 'upcoming', 'expired'
   let selectedCountry = 'all';
   let selectedMonthYear = 'all';
-  let sortBy = 'date-asc'; // 'date-asc', 'date-desc', 'title'
+  let sortBy = 'date-asc'; // 'date-asc', 'date-desc', 'pdf-order', 'title'
+  let viewMode = 'cards'; // 'cards' (2-col full PDF cards), 'single' (1-col large PDF page view), 'table' (PDF page 2/3 index table)
   let searchQuery = '';
   let activeModalEventId = null;
 
   // --- I18N DICTIONARY ---
   const i18n = {
     ku: {
-      siteTitle: "کۆنفرانس و پێشانگاکانی فۆرسایت | ڕێبەری نێودەوڵەتی",
-      brandName: "فۆرسایت",
-      brandTagline: "ڕێبەری کۆنفرانس و پێشانگا نێودەوڵەتییەکان",
-      heroBadge: "ئەپدەیتی هەفتانەی ٢٠٢٦ – ٢٠٢٧",
-      heroTitle: "گەورەترین ڕێبەری <span>کۆنفرانس و پێشانگا</span> نێودەوڵەتییەکان",
-      heroSubtitle: "ڕێبەری تەواوی کۆنفرانسە پزیشکی، ئەندازیاری، تەکنەلۆژی و بازرگانییەکان لەگەڵ دابینکردنی بانگهێشتنامەی فەرمیی ڤیزای شنگن، بەریتانیا، کەنەدا و ئەمریکا لەلایەن تیمی فۆرسایتەوە.",
-      statTotal: "کۆی بۆنەکان",
-      statMedical: "پزیشکی و تەندروستی",
-      statTech: "ئەندازیاری و تەکنەلۆژیا",
-      statCountries: "وڵاتی جیهانی",
-      searchPlaceholder: "گەڕان بەپێی ناوی کۆنفرانس، شار، وڵات یان بواری پسپۆڕی...",
-      tabAll: "هەموو بۆنەکان",
-      tabMedical: "پزیشکی و تەندروستی",
-      tabTech: "ئەندازیاری و تەکنەلۆژیا",
-      tabUpcoming: "بەردەستەکان",
+      siteTitle: "کۆنفرانس و پێشانگاکانی فۆرسایت | FORESIGHT Visa Consultancy & Academic Services",
+      brandName: "FORESIGHT",
+      brandTagline: "ڕاوێژکاریی ڤیزا و خزمەتگوزارییە ئەکادیمییەکان",
+      heroBadge: "ڕێبەری فەرمیی کۆنفرانس و پێشانگا نێودەوڵەتییەکان ٢٠٢٦ – ٢٠٢٧",
+      heroTitle: "پێرستی گشتیی <span>کۆنفرانس و پێشانگا</span> جیهانییەکان",
+      heroSubtitle: "تەواوی زانیاری، وێنە، بەروار، شوێنی بەڕێوەچوون، گرووپی بەشداربووان و لینکی فەرمیی ٤٢ کۆنفرانس و پێشانگای پزیشکی، ئەندازیاری، تەکنەلۆژی و بازرگانی بە سەرپەرشتیی فۆرسایت.",
+      statTotal: "کۆی گشتیی کۆنفرانسەکان",
+      statMedical: "کۆنفرانسی پزیشکی و ددانسازی",
+      statTech: "پێشانگای ئەندازیاری و بازرگانی",
+      statCountries: "وڵاتی جیاواز",
+      searchPlaceholder: "گەڕان بەپێی ناوی کۆنفرانس، وڵات، شار، بواری پسپۆڕی یان شوێن...",
+      viewCards: "کارتە تەواوەکان",
+      viewSingle: "پەڕەی گەورە (PDF)",
+      viewTable: "پێرستی گشتی (خشتە)",
+      tabAll: "هەموو کۆنفرانسەکان",
+      tabMedical: "بەشی یەکەم: پزیشکی و ددانسازی",
+      tabTech: "بەشی دووەم: ئەندازیاری، بازرگانی و تەکنەلۆژی",
+      tabUpcoming: "بەردەستەکان (داهاتوو)",
       tabExpired: "بەسەرچووەکان",
-      filterCountryLabel: "وڵات",
+      filterCountryLabel: "فلتەر بەپێی وڵات",
       filterCountryAll: "هەموو وڵاتەکان",
-      filterDateLabel: "مانگ و ساڵ",
-      filterDateAll: "هەموو مانگەکان",
-      filterSortLabel: "ڕیزبەندی",
-      sortDateAsc: "زووترین بەروار",
-      sortDateDesc: "درەنگترین بەروار",
-      sortTitle: "ئەلفوبێ",
+      filterDateLabel: "فلتەر بەپێی مانگ و ساڵ",
+      filterDateAll: "هەموو مانگ و ساڵەکان",
+      filterSortLabel: "ڕیزبەندکردن",
+      sortPdfOrder: "ڕیزبەندیی پیدیئێفەکە",
+      sortDateAsc: "نزیکترین بەروار",
+      sortDateDesc: "دوورترین بەروار",
+      sortTitle: "بەپێی ئەلفوبێ",
       resetFilters: "سڕینەوەی فلتەرەکان",
-      resultsCount: "دۆزراوەتەوە:",
-      eventsWord: "بۆنە",
-      badgeMedical: "پزیشکی",
-      badgeTech: "ئەندازیاری و تەکنەلۆژیا",
+      resultsCount: "ژمارەی کۆنفرانسە پیشاندراوەکان:",
+      eventsWord: "کۆنفرانس و پێشانگا",
+      badgeMedical: "پزیشکی و ددانسازی",
+      badgeTech: "ئەندازیاری و بازرگانی",
       statusUpcoming: "بەردەستە",
       statusExpired: "بەسەرچووە",
-      viewDetails: "وردەکارییەکان",
-      officialSite: "ماڵپەڕی فەرمی",
-      ticketsLink: "کڕینی تکت و تۆمارکردن",
-      visaFormLink: "فۆرمی بانگهێشتنامەی ڤیزا",
-      emptyTitle: "هیچ ئەنجامێک نەدۆزرایەوە",
-      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان لابدە بۆ بینینی هەموو کۆنفرانسەکان.",
-      btnReset: "سڕینەوەی گەڕان",
-      modalAudienceTitle: "بۆ کێ دەست دەدات؟ (بەشداربووان)",
-      modalVisaTitle: "ڕێکاری بانگهێشتنامە و ڤیزا",
-      modalForesightTitle: "پشتگیری و خزمەتگوزاریی فۆرسایت",
-      modalMetaLocation: "شوێن:",
-      modalMetaDate: "بەروار:",
-      modalMetaVenue: "هۆڵی بۆنە:",
-      modalMetaPrice: "تێچووی تکت:",
-      modalShareBtn: "کۆپیکردنی بەستەر",
-      copiedNotice: "بەستەری کۆنفرانس کۆپی کرا!",
-      footerDesc: "فۆرسایت ڕێبەری سەرەکییە بۆ ئاسانکاریی بەشداریکردنی پزیشکان، ئەندازیاران و بازرگانان لە دیارترین کۆنفرانس و پێشانگاکانی جیهان لەگەڵ دابینکردنی بانگهێشتنامەی فەرمی و بەڕێوەبردنی دۆسیەی ڤیزا.",
-      footerRights: "تەواوی مافەکانی پارێزراوە بۆ فۆرسایت © ٢٠٢٦"
+      daysLeft: "ڕۆژی ماوە",
+      metaCountryCity: "وڵات و شار",
+      metaDate: "بەرواری کۆنفرانس",
+      metaVenue: "شوێنی بەڕێوەچوون",
+      metaTicket: "تکت و تۆمارکردن:",
+      audienceHeading: "تایبەتە بە کێ؟",
+      officialSiteBtn: "سەردانی ماڵپەڕی فەرمی",
+      ticketLinkBtn: "لینکی تکت / تۆمارکردن",
+      visaFormBtn: "فۆرمی بانگهێشتنامە",
+      expandCardBtn: "پیشاندان بە گەورەیی",
+      shareBtn: "کۆپیکردنی بەستەر",
+      copiedNotice: "بەستەری کۆنفرانسەکە کۆپی کرا!",
+      tableColPage: "ژمارە",
+      tableColName: "ناوی کۆنفرانس / پێشانگا",
+      tableColLocation: "وڵات و شار",
+      tableColDate: "بەروار",
+      tableColStatus: "دۆخ",
+      tableColLinks: "لینکی فەرمی",
+      emptyTitle: "هیچ کۆنفرانسێک نەدۆزرایەوە",
+      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان ڕێکبخەرەوە بۆ بینینی هەموو کۆنفرانسەکان.",
+      footerDesc: "FORESIGHT — Visa Consultancy & Academic Services: سەرپەرشتیی تەواوی ڕێکارەکانی تۆمارکردن لە کۆنفرانس و پێشانگا نێودەوڵەتییەکان، وەرگرتنی بانگهێشتنامەی فەرمی و ڕێکخستنی فایلی ڤیزای شنگن، بەریتانیا، کەنەدا و ئەمریکا.",
+      footerRights: "سەرجەم مافەکان پارێزراوە بۆ FORESIGHT © 2026–2027"
     },
     en: {
-      siteTitle: "Foresight Conferences & Exhibitions | Global Portal",
-      brandName: "Foresight",
-      brandTagline: "Global Conferences & Trade Exhibitions Guide",
-      heroBadge: "Weekly Updates 2026 – 2027",
-      heroTitle: "The Premier Guide to <span>Conferences & Expos</span>",
-      heroSubtitle: "Comprehensive portal for international medical, engineering, tech, and trade exhibitions with official visa invitation letter assistance for Schengen, UK, Canada, and USA by Foresight.",
-      statTotal: "Total Events",
-      statMedical: "Medical & Health",
-      statTech: "Engineering & Tech",
+      siteTitle: "FORESIGHT Conferences & Exhibitions | Visa Consultancy & Academic Services",
+      brandName: "FORESIGHT",
+      brandTagline: "Visa Consultancy & Academic Services",
+      heroBadge: "Official International Conferences & Exhibitions Guide 2026 – 2027",
+      heroTitle: "General Directory of <span>Global Conferences & Expos</span>",
+      heroSubtitle: "Complete official information, photos, dates, venues, target audiences, and direct official links for 42 medical, dental, engineering, technology, and trade exhibitions supervised by Foresight.",
+      statTotal: "Total Conferences",
+      statMedical: "Medical & Dental",
+      statTech: "Engineering, Tech & Trade",
       statCountries: "Countries",
-      searchPlaceholder: "Search by conference name, city, country, or field...",
-      tabAll: "All Events",
-      tabMedical: "Medical & Health",
-      tabTech: "Engineering & Tech",
-      tabUpcoming: "Upcoming",
+      searchPlaceholder: "Search by conference name, country, city, specialty, or venue...",
+      viewCards: "Full Detail Cards",
+      viewSingle: "Large Page View",
+      viewTable: "General Index Table",
+      tabAll: "All Conferences",
+      tabMedical: "Part 1: Medical & Dental",
+      tabTech: "Part 2: Engineering, Trade & Tech",
+      tabUpcoming: "Active / Upcoming",
       tabExpired: "Past / Expired",
-      filterCountryLabel: "Country",
+      filterCountryLabel: "Filter by Country",
       filterCountryAll: "All Countries",
-      filterDateLabel: "Month & Year",
-      filterDateAll: "All Dates",
-      filterSortLabel: "Sort By",
-      sortDateAsc: "Date: Soonest First",
-      sortDateDesc: "Date: Latest First",
+      filterDateLabel: "Filter by Month & Year",
+      filterDateAll: "All Months & Years",
+      filterSortLabel: "Sort Order",
+      sortPdfOrder: "Original PDF Order",
+      sortDateAsc: "Soonest Date First",
+      sortDateDesc: "Latest Date First",
       sortTitle: "Alphabetical",
-      resetFilters: "Clear Filters",
-      resultsCount: "Showing:",
-      eventsWord: "events",
-      badgeMedical: "Medical",
-      badgeTech: "Engineering & Tech",
-      statusUpcoming: "Active",
-      statusExpired: "Past / Expired",
-      viewDetails: "View Details",
-      officialSite: "Official Site",
-      ticketsLink: "Buy Tickets / Register",
-      visaFormLink: "Visa Invitation Form",
-      emptyTitle: "No Events Found",
-      emptyDesc: "Try adjusting your search criteria or clear your filters to view available conferences.",
-      btnReset: "Reset Filters",
-      modalAudienceTitle: "Who Should Attend? (Target Audience)",
-      modalVisaTitle: "Visa Invitation Procedure",
-      modalForesightTitle: "Foresight Dossier & Visa Services",
-      modalMetaLocation: "Location:",
-      modalMetaDate: "Dates:",
-      modalMetaVenue: "Venue:",
-      modalMetaPrice: "Tickets:",
-      modalShareBtn: "Copy Event Link",
-      copiedNotice: "Event link copied to clipboard!",
-      footerDesc: "Foresight is your premier partner for international conference participation, official invitation letter issuance, and comprehensive visa dossier management across Europe and North America.",
-      footerRights: "All Rights Reserved © Foresight 2026"
+      resetFilters: "Reset Filters",
+      resultsCount: "Showing Conferences:",
+      eventsWord: "conferences & exhibitions",
+      badgeMedical: "Medical & Dental",
+      badgeTech: "Engineering & Trade",
+      statusUpcoming: "Active / Open",
+      statusExpired: "Expired / Past",
+      daysLeft: "days left",
+      metaCountryCity: "Country & City",
+      metaDate: "Conference Date",
+      metaVenue: "Venue",
+      metaTicket: "Tickets & Registration:",
+      audienceHeading: "Who Should Attend?",
+      officialSiteBtn: "Official Website",
+      ticketLinkBtn: "Tickets / Registration",
+      visaFormBtn: "Visa Invitation Form",
+      expandCardBtn: "Full View",
+      shareBtn: "Copy Link",
+      copiedNotice: "Conference link copied to clipboard!",
+      tableColPage: "#",
+      tableColName: "Conference / Exhibition Name",
+      tableColLocation: "Country & City",
+      tableColDate: "Dates",
+      tableColStatus: "Status",
+      tableColLinks: "Official Link",
+      emptyTitle: "No Matching Conferences Found",
+      emptyDesc: "Try changing your search query or resetting the filters to see all 42 conferences.",
+      footerDesc: "FORESIGHT — Visa Consultancy & Academic Services: Complete supervision of international conference registration, official invitation letter acquisition, and Schengen, UK, Canada & USA visa dossier preparation.",
+      footerRights: "All Rights Reserved © FORESIGHT 2026–2027"
     }
   };
 
-  // --- HELPERS ---
-  const now = new Date();
-
-  function isEventExpired(event) {
-    if (!event.endDate) return false;
-    const end = new Date(event.endDate + 'T23:59:59');
-    return end < now;
+  // --- DATE & EXPIRATION LOGIC ---
+  function getEventStatus(event) {
+    const now = new Date();
+    const end = new Date((event.endDate || event.startDate) + 'T23:59:59');
+    const start = new Date(event.startDate + 'T00:00:00');
+    const isExpired = end < now;
+    const diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+    return { isExpired, diffDays };
   }
 
   function getMonthYearKey(dateStr) {
@@ -140,16 +162,25 @@
     if (!key) return '';
     const [year, month] = key.split('-');
     const mNum = parseInt(month, 10);
-    const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthNamesKu = ["کانوونی دووەم", "شوبات", "ئازار", "نیسان", "ئایار", "حوزەیران", "تەممووز", "ئاب", "ئەیلوول", "تشرینی یەکەم", "تشرینی دووەم", "کانوونی یەکەم"];
-    
-    if (lang === 'ku') {
-      return `${monthNamesKu[mNum - 1]} ${year}`;
-    }
-    return `${monthNamesEn[mNum - 1]} ${year}`;
+    const monthNamesEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthNamesKu = [
+      "مانگی ١ (کانوونی دووەم / Jan)",
+      "مانگی ٢ (شوبات / Feb)",
+      "مانگی ٣ (ئازار / Mar)",
+      "مانگی ٤ (نیسان / Apr)",
+      "مانگی ٥ (ئایار / May)",
+      "مانگی ٦ (حوزەیران / Jun)",
+      "مانگی ٧ (تەممووز / Jul)",
+      "مانگی ٨ (ئاب / Aug)",
+      "مانگی ٩ (ئەیلوول / Sep)",
+      "مانگی ١٠ (تشرینی یەکەم / Oct)",
+      "مانگی ١١ (تشرینی دووەم / Nov)",
+      "مانگی ١٢ (کانوونی یەکەم / Dec)"
+    ];
+    return lang === 'ku' ? `${monthNamesKu[mNum - 1]} ${year}` : `${monthNamesEn[mNum - 1]} ${year}`;
   }
 
-  // --- DOM ELEMENTS ---
+  // --- DOM REFERENCES ---
   const elements = {
     langBtn: document.getElementById('langToggleBtn'),
     langText: document.getElementById('langText'),
@@ -159,28 +190,28 @@
     monthYearSelect: document.getElementById('monthYearSelect'),
     sortSelect: document.getElementById('sortSelect'),
     resetBtn: document.getElementById('resetFiltersBtn'),
+    viewModeGroup: document.getElementById('viewModeGroup'),
     eventsGrid: document.getElementById('eventsGrid'),
+    tableWrapper: document.getElementById('indexTableWrapper'),
     resultsCount: document.getElementById('resultsCountNumber'),
     resultsTotal: document.getElementById('resultsTotalNumber'),
     emptyState: document.getElementById('emptyState'),
     modalOverlay: document.getElementById('modalOverlay'),
-    modalCloseBtn: document.getElementById('modalCloseBtn'),
     modalContent: document.getElementById('modalContentArea'),
     toast: document.getElementById('toastNotice'),
     backToTop: document.getElementById('backToTopBtn')
   };
 
-  // --- INITIALIZATION ---
+  // --- INITIALIZE ---
   function init() {
     setLanguage(currentLang, false);
     populateFilterDropdowns();
     renderStatistics();
     bindEvents();
-    checkUrlHash();
     applyFiltersAndRender();
+    checkUrlHash();
   }
 
-  // --- LANGUAGE SWITCHER ---
   function setLanguage(lang, rerender = true) {
     currentLang = lang;
     localStorage.setItem('foresight_lang', lang);
@@ -191,7 +222,6 @@
       elements.langText.textContent = lang === 'ku' ? 'English' : 'کوردی';
     }
 
-    // Update static texts
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (i18n[lang] && i18n[lang][key]) {
@@ -199,7 +229,6 @@
       }
     });
 
-    // Update placeholder
     if (elements.searchInput) {
       elements.searchInput.placeholder = i18n[lang].searchPlaceholder;
     }
@@ -207,100 +236,86 @@
     if (rerender) {
       populateFilterDropdowns();
       applyFiltersAndRender();
-      if (activeModalEventId) {
-        openModal(activeModalEventId);
-      }
+      if (activeModalEventId) openModal(activeModalEventId);
     }
   }
 
-  // --- POPULATE DROPDOWNS ---
   function populateFilterDropdowns() {
-    if (!window.FORESIGHT_EVENTS) return;
-    const events = window.FORESIGHT_EVENTS;
+    const events = getEvents();
+    if (!events.length) return;
     const t = i18n[currentLang];
 
-    // 1. Countries
+    // Countries
     const countriesMap = new Map();
     events.forEach(e => {
       const name = currentLang === 'ku' ? e.country_ku : e.country_en;
-      if (!countriesMap.has(e.country_en)) {
-        countriesMap.set(e.country_en, { name, flag: e.flag || '🌐' });
-      }
+      const count = (countriesMap.get(e.country_en)?.count || 0) + 1;
+      countriesMap.set(e.country_en, { name, count });
     });
 
-    const currentCountryVal = elements.countrySelect.value || 'all';
-    elements.countrySelect.innerHTML = `<option value="all">${t.filterCountryAll}</option>`;
+    const prevCountry = elements.countrySelect.value || 'all';
+    elements.countrySelect.innerHTML = `<option value="all">${t.filterCountryAll} (${events.length})</option>`;
     Array.from(countriesMap.entries())
-      .sort((a, b) => a[1].name.localeCompare(b[1].name))
+      .sort((a, b) => b[1].count - a[1].count)
       .forEach(([key, val]) => {
         const opt = document.createElement('option');
         opt.value = key;
-        opt.textContent = `${val.flag} ${val.name}`;
+        opt.textContent = `${val.name} (${val.count})`;
         elements.countrySelect.appendChild(opt);
       });
-    elements.countrySelect.value = currentCountryVal;
+    elements.countrySelect.value = prevCountry;
 
-    // 2. Month & Years
-    const monthSet = new Set();
+    // Months & Years
+    const monthCounts = new Map();
     events.forEach(e => {
       const k = getMonthYearKey(e.startDate);
-      if (k) monthSet.add(k);
+      if (k) monthCounts.set(k, (monthCounts.get(k) || 0) + 1);
     });
 
-    const currentMonthVal = elements.monthYearSelect.value || 'all';
+    const prevMonth = elements.monthYearSelect.value || 'all';
     elements.monthYearSelect.innerHTML = `<option value="all">${t.filterDateAll}</option>`;
-    Array.from(monthSet)
+    Array.from(monthCounts.keys())
       .sort()
       .forEach(k => {
         const opt = document.createElement('option');
         opt.value = k;
-        opt.textContent = formatMonthYearLabel(k, currentLang);
+        opt.textContent = `${formatMonthYearLabel(k, currentLang)} (${monthCounts.get(k)})`;
         elements.monthYearSelect.appendChild(opt);
       });
-    elements.monthYearSelect.value = currentMonthVal;
+    elements.monthYearSelect.value = prevMonth;
   }
 
-  // --- STATISTICS BANNER ---
   function renderStatistics() {
-    if (!window.FORESIGHT_EVENTS) return;
-    const events = window.FORESIGHT_EVENTS;
+    const events = getEvents();
+    if (!events.length) return;
 
     const total = events.length;
     const medical = events.filter(e => e.category === 'medical').length;
     const tech = events.filter(e => e.category === 'non-medical').length;
     const countries = new Set(events.map(e => e.country_en)).size;
+    const upcoming = events.filter(e => !getEventStatus(e).isExpired).length;
+    const expired = events.filter(e => getEventStatus(e).isExpired).length;
 
-    const statTotalEl = document.getElementById('statTotalNum');
-    const statMedEl = document.getElementById('statMedNum');
-    const statTechEl = document.getElementById('statTechNum');
-    const statCountriesEl = document.getElementById('statCountriesNum');
+    const setEl = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
 
-    if (statTotalEl) statTotalEl.textContent = total;
-    if (statMedEl) statMedEl.textContent = medical;
-    if (statTechEl) statTechEl.textContent = tech;
-    if (statCountriesEl) statCountriesEl.textContent = countries;
+    setEl('statTotalNum', total);
+    setEl('statMedNum', medical);
+    setEl('statTechNum', tech);
+    setEl('statCountriesNum', countries);
 
-    // Update pill counters
-    const badgeAll = document.getElementById('badgeCountAll');
-    const badgeMed = document.getElementById('badgeCountMed');
-    const badgeTech = document.getElementById('badgeCountTech');
-    const badgeActive = document.getElementById('badgeCountActive');
-    const badgeExpired = document.getElementById('badgeCountExpired');
-
-    const upcoming = events.filter(e => !isEventExpired(e)).length;
-    const expired = events.filter(e => isEventExpired(e)).length;
-
-    if (badgeAll) badgeAll.textContent = total;
-    if (badgeMed) badgeMed.textContent = medical;
-    if (badgeTech) badgeTech.textContent = tech;
-    if (badgeActive) badgeActive.textContent = upcoming;
-    if (badgeExpired) badgeExpired.textContent = expired;
+    setEl('badgeCountAll', total);
+    setEl('badgeCountMed', medical);
+    setEl('badgeCountTech', tech);
+    setEl('badgeCountActive', upcoming);
+    setEl('badgeCountExpired', expired);
   }
 
-  // --- FILTERING & SORTING ---
   function applyFiltersAndRender() {
-    if (!window.FORESIGHT_EVENTS) return;
-    let list = [...window.FORESIGHT_EVENTS];
+    const events = getEvents();
+    let list = [...events];
 
     // 1. Tab Filter
     if (activeTab === 'medical') {
@@ -308,9 +323,9 @@
     } else if (activeTab === 'non-medical') {
       list = list.filter(e => e.category === 'non-medical');
     } else if (activeTab === 'upcoming') {
-      list = list.filter(e => !isEventExpired(e));
+      list = list.filter(e => !getEventStatus(e).isExpired);
     } else if (activeTab === 'expired') {
-      list = list.filter(e => isEventExpired(e));
+      list = list.filter(e => getEventStatus(e).isExpired);
     }
 
     // 2. Country Filter
@@ -318,44 +333,31 @@
       list = list.filter(e => e.country_en === selectedCountry);
     }
 
-    // 3. Month & Year Filter
+    // 3. Month/Year Filter
     if (selectedMonthYear !== 'all') {
       list = list.filter(e => getMonthYearKey(e.startDate) === selectedMonthYear);
     }
 
-    // 4. Text Search
+    // 4. Search Filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter(e => {
-        const titleKu = (e.title_ku || '').toLowerCase();
-        const titleEn = (e.title_en || '').toLowerCase();
-        const fieldKu = (e.field_ku || '').toLowerCase();
-        const fieldEn = (e.field_en || '').toLowerCase();
-        const cityKu = (e.city_ku || '').toLowerCase();
-        const cityEn = (e.city_en || '').toLowerCase();
-        const venue = (e.venue || '').toLowerCase();
-        const overviewKu = (e.overview_ku || '').toLowerCase();
-        const overviewEn = (e.overview_en || '').toLowerCase();
-
-        return (
-          titleKu.includes(q) ||
-          titleEn.includes(q) ||
-          fieldKu.includes(q) ||
-          fieldEn.includes(q) ||
-          cityKu.includes(q) ||
-          cityEn.includes(q) ||
-          venue.includes(q) ||
-          overviewKu.includes(q) ||
-          overviewEn.includes(q)
-        );
+        const fields = [
+          e.title_ku, e.title_en, e.headline_ku, e.headline_en,
+          e.field_ku, e.field_en, e.city_ku, e.city_en,
+          e.country_ku, e.country_en, e.venue,
+          e.overview_ku, e.overview_en,
+          ...(e.audience_ku || []), ...(e.audience_en || [])
+        ];
+        return fields.some(f => (f || '').toLowerCase().includes(q));
       });
     }
 
-    // 5. Sorting
+    // 5. Sort
     if (sortBy === 'date-asc') {
-      list.sort((a, b) => new Date(a.startDate || '2099-01-01') - new Date(b.startDate || '2099-01-01'));
+      list.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     } else if (sortBy === 'date-desc') {
-      list.sort((a, b) => new Date(b.startDate || '2000-01-01') - new Date(a.startDate || '2000-01-01'));
+      list.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
     } else if (sortBy === 'title') {
       list.sort((a, b) => {
         const tA = currentLang === 'ku' ? a.title_ku : a.title_en;
@@ -364,257 +366,276 @@
       });
     }
 
-    // Render results
-    renderCards(list);
-  }
+    if (elements.resultsCount) elements.resultsCount.textContent = list.length;
+    if (elements.resultsTotal) elements.resultsTotal.textContent = events.length;
 
-  // --- RENDER EVENT CARDS ---
-  function renderCards(events) {
-    const t = i18n[currentLang];
-    elements.eventsGrid.innerHTML = '';
-
-    if (elements.resultsCount) elements.resultsCount.textContent = events.length;
-    if (elements.resultsTotal) elements.resultsTotal.textContent = window.FORESIGHT_EVENTS.length;
-
-    if (events.length === 0) {
+    if (list.length === 0) {
+      elements.eventsGrid.style.display = 'none';
+      elements.tableWrapper.style.display = 'none';
       elements.emptyState.style.display = 'block';
       return;
     }
 
     elements.emptyState.style.display = 'none';
 
-    events.forEach(e => {
-      const expired = isEventExpired(e);
-      const title = currentLang === 'ku' ? e.title_ku : e.title_en;
-      const city = currentLang === 'ku' ? e.city_ku : e.city_en;
-      const country = currentLang === 'ku' ? e.country_ku : e.country_en;
-      const dateText = currentLang === 'ku' ? e.dateText_ku : e.dateText_en;
-      const excerpt = currentLang === 'ku' ? e.overview_ku : e.overview_en;
-      const categoryBadge = e.category === 'medical' ? t.badgeMedical : t.badgeTech;
-      const categoryClass = e.category === 'medical' ? 'badge-medical' : 'badge-tech';
-      const statusText = expired ? t.statusExpired : t.statusUpcoming;
-      const statusClass = expired ? 'badge-status-expired' : 'badge-status-active';
-
-      const card = document.createElement('article');
-      card.className = `event-card ${expired ? 'is-expired' : ''}`;
-      card.id = `card-${e.id}`;
-
-      card.innerHTML = `
-        <div class="card-top-bar">
-          <div class="badge-group">
-            <span class="badge ${categoryClass}">${categoryBadge}</span>
-            <span class="badge ${statusClass}">
-              ${expired ? '⏱ ' : '● '}${statusText}
-            </span>
-          </div>
-          <span class="badge-flag" title="${country}">
-            ${e.flag || '🌐'} ${city}
-          </span>
-        </div>
-
-        <div class="card-body">
-          <div class="event-dates-tag">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <span>${dateText}</span>
-          </div>
-
-          <h3 class="event-title" title="${title}">${title}</h3>
-
-          <div class="event-location">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            <span>${e.venue || city + ', ' + country}</span>
-          </div>
-
-          <p class="event-excerpt">${excerpt}</p>
-
-          <div class="visa-feature-banner">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <span>${currentLang === 'ku' ? e.visa_ku : e.visa_en}</span>
-          </div>
-
-          <div class="card-actions">
-            <button class="btn-details" data-id="${e.id}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              <span>${t.viewDetails}</span>
-            </button>
-            <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-official-link" title="${t.officialSite}">
-              <span>${t.officialSite}</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
-          </div>
-        </div>
-      `;
-
-      elements.eventsGrid.appendChild(card);
-    });
+    if (viewMode === 'table') {
+      elements.eventsGrid.style.display = 'none';
+      elements.tableWrapper.style.display = 'block';
+      renderIndexTable(list);
+    } else {
+      elements.tableWrapper.style.display = 'none';
+      elements.eventsGrid.style.display = 'grid';
+      elements.eventsGrid.classList.toggle('single-col-mode', viewMode === 'single');
+      renderFullCards(list);
+    }
   }
 
-  // --- DETAILS MODAL ---
-  function openModal(id) {
-    if (!window.FORESIGHT_EVENTS) return;
-    const event = window.FORESIGHT_EVENTS.find(e => e.id === id);
-    if (!event) return;
-
-    activeModalEventId = id;
-    window.location.hash = `event=${id}`;
-
+  // --- BUILD CARD HTML (EXACT PDF PAGE FIDELITY + ALL LINKS) ---
+  function buildCardInnerHtml(e, isModal = false) {
     const t = i18n[currentLang];
-    const expired = isEventExpired(event);
-    const title = currentLang === 'ku' ? event.title_ku : event.title_en;
-    const altTitle = currentLang === 'ku' ? event.title_en : event.title_ku;
-    const city = currentLang === 'ku' ? event.city_ku : event.city_en;
-    const country = currentLang === 'ku' ? event.country_ku : event.country_en;
-    const dateText = currentLang === 'ku' ? event.dateText_ku : event.dateText_en;
-    const overview = currentLang === 'ku' ? event.overview_ku : event.overview_en;
-    const audience = currentLang === 'ku' ? event.audience_ku : event.audience_en;
-    const visa = currentLang === 'ku' ? event.visa_ku : event.visa_en;
-    const foresight = currentLang === 'ku' ? event.foresight_ku : event.foresight_en;
-    const ticketPrice = currentLang === 'ku' ? event.ticketPrice_ku : event.ticketPrice_en;
+    const { isExpired, diffDays } = getEventStatus(e);
 
-    const audienceListHtml = (audience || []).map(item => `<li>${item}</li>`).join('');
+    const country = currentLang === 'ku' ? e.country_ku : e.country_en;
+    const city = currentLang === 'ku' ? e.city_ku : e.city_en;
+    const title = currentLang === 'ku' ? e.title_ku : e.title_en;
+    const headline = currentLang === 'ku' ? e.headline_ku : e.headline_en;
+    const overview = currentLang === 'ku' ? e.overview_ku : e.overview_en;
+    const field = currentLang === 'ku' ? e.field_ku : e.field_en;
+    const audience = currentLang === 'ku' ? e.audience_ku : e.audience_en;
+    const foresightTitle = currentLang === 'ku' ? e.foresight_title_ku : e.foresight_title_en;
+    const foresightText = currentLang === 'ku' ? e.foresight_ku : e.foresight_en;
+    const ticketPrice = currentLang === 'ku' ? e.ticketPrice_ku : e.ticketPrice_en;
+    const deadline = currentLang === 'ku' ? e.deadline_ku : e.deadline_en;
 
-    elements.modalContent.innerHTML = `
-      <div class="modal-header">
-        <div class="modal-title-col">
-          <div class="badge-group" style="margin-bottom: 0.25rem;">
-            <span class="badge ${event.category === 'medical' ? 'badge-medical' : 'badge-tech'}">
-              ${event.category === 'medical' ? t.badgeMedical : t.badgeTech}
-            </span>
-            <span class="badge ${expired ? 'badge-status-expired' : 'badge-status-active'}">
-              ${expired ? '⏱ ' + t.statusExpired : '● ' + t.statusUpcoming}
-            </span>
-          </div>
-          <h2 class="modal-title">${title}</h2>
-          <div class="modal-subtitle">${altTitle}</div>
+    const statusBadgeHtml = isExpired
+      ? `<span class="status-pill expired">⏱ ${t.statusExpired}</span>`
+      : `<span class="status-pill active">● ${t.statusUpcoming}${diffDays > 0 ? ` (${diffDays} ${t.daysLeft})` : ''}</span>`;
+
+    const categoryBadgeHtml = e.category === 'medical'
+      ? `<span class="cat-pill medical">🩺 ${t.badgeMedical}</span>`
+      : `<span class="cat-pill non-medical">🏗️ ${t.badgeTech}</span>`;
+
+    const audienceBulletsHtml = (audience || []).map(item => `<li><span>${item}</span></li>`).join('');
+
+    return `
+      <!-- Top Bar: Country Flag & City + Date & Status Badges -->
+      <div class="pdf-card-topbar">
+        <div class="country-flag-pill">
+          <img src="${e.flagImg}" alt="${country}" class="country-flag-img" loading="lazy" />
+          <span class="country-city-name">${country} — ${city}</span>
         </div>
-        <button class="modal-close-btn" id="modalCloseBtnInner" aria-label="Close modal">✕</button>
+        <div class="top-badges-wrap">
+          ${categoryBadgeHtml}
+          ${statusBadgeHtml}
+          <span class="date-pill-badge">📅 ${e.dateText_en}</span>
+        </div>
       </div>
 
-      <div class="modal-body">
-        <div class="info-meta-chips">
-          <div class="info-chip">
-            <strong>${t.modalMetaLocation}</strong>
-            <span>${event.flag || '🌐'} ${city}, ${country}</span>
-          </div>
-          <div class="info-chip">
-            <strong>${t.modalMetaDate}</strong>
-            <span>📅 ${dateText}</span>
-          </div>
-          <div class="info-chip">
-            <strong>${t.modalMetaVenue}</strong>
-            <span>🏛️ ${event.venue || city}</span>
-          </div>
-          ${ticketPrice ? `
-            <div class="info-chip">
-              <strong>${t.modalMetaPrice}</strong>
-              <span>🎟️ ${ticketPrice}</span>
-            </div>
-          ` : ''}
+      <div class="pdf-card-content">
+        <!-- Titles & Visa Headline (Exact from PDF) -->
+        <div class="pdf-title-group">
+          <div class="pdf-small-title">${title}</div>
+          <h3 class="pdf-big-headline">${headline}</h3>
         </div>
 
-        <div class="info-section">
-          <p style="font-size: 0.95rem; color: #334155; line-height: 1.6;">${overview}</p>
+        <p class="pdf-overview-text">${overview}</p>
+
+        <!-- High-Res Conference Photo Banner (Extracted from PDF) -->
+        <div class="pdf-photo-banner" style="${isModal ? 'height: 240px;' : ''}">
+          <img src="${e.image}" alt="${title}" loading="lazy" />
+          <div class="photo-field-overlay">
+            <span class="photo-field-tag">📌 ${field}</span>
+          </div>
         </div>
 
-        ${audienceListHtml ? `
-          <div class="info-section">
-            <h4 class="info-section-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              ${t.modalAudienceTitle}
-            </h4>
-            <ul class="audience-list">
-              ${audienceListHtml}
-            </ul>
+        <!-- 3-Column Official Metadata Box (وڵات و شار | بەرواری کۆنفرانس | شوێنی بەڕێوەچوون) -->
+        <div class="pdf-meta-grid">
+          <div class="pdf-meta-col">
+            <span class="pdf-meta-label">${t.metaCountryCity}</span>
+            <span class="pdf-meta-val">${country} — ${city}</span>
+          </div>
+          <div class="pdf-meta-col">
+            <span class="pdf-meta-label">${t.metaDate}</span>
+            <span class="pdf-meta-val" dir="ltr" style="text-align: start;">${e.dateText_en}</span>
+          </div>
+          <div class="pdf-meta-col">
+            <span class="pdf-meta-label">${t.metaVenue}</span>
+            <span class="pdf-meta-val">${e.venue}</span>
+          </div>
+        </div>
+
+        ${ticketPrice ? `
+          <div class="pdf-ticket-bar">
+            <div><strong>🎟️ ${t.metaTicket}</strong> ${ticketPrice}</div>
+            ${e.contactInfo ? `<div style="margin-top:0.2rem;"><strong>📩 Contact:</strong> <span dir="ltr">${e.contactInfo}</span></div>` : ''}
           </div>
         ` : ''}
 
-        <div class="visa-callout">
-          <strong>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle; margin-left:4px;">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            ${t.modalVisaTitle}
-          </strong>
-          <p>${visa}</p>
+        ${deadline ? `
+          <div class="pdf-deadline-alert">
+            ⚠️ ${deadline}
+          </div>
+        ` : ''}
+
+        <!-- "تایبەتە بە کێ؟" (Target Audience Box - Exact from PDF) -->
+        <div class="pdf-audience-box">
+          <div class="pdf-box-heading">
+            <span class="teal-dot"></span>
+            <span>${t.audienceHeading}</span>
+          </div>
+          <ul class="pdf-audience-list">
+            ${audienceBulletsHtml}
+          </ul>
         </div>
 
-        <div class="foresight-supervision-box">
-          <strong>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle; margin-left:4px;">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-            ${t.modalForesightTitle}
-          </strong>
-          <p>${foresight}</p>
+        <!-- "سەرپەرشتیی فۆرسایت" (Teal Supervision Box - Exact from PDF) -->
+        <div class="pdf-foresight-box">
+          <div class="pdf-foresight-title">🛡️ ${foresightTitle}</div>
+          <div class="pdf-foresight-text">${foresightText}</div>
         </div>
-      </div>
 
-      <div class="modal-footer">
-        <button class="btn-secondary-action" id="shareEventBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-            <polyline points="16 6 12 2 8 6"></polyline>
-            <line x1="12" y1="2" x2="12" y2="15"></line>
-          </svg>
-          <span>${t.modalShareBtn}</span>
-        </button>
-
-        <div class="footer-btn-group">
-          ${event.ticketUrl ? `
-            <a href="${event.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary-action">
-              <span>🎟️ ${t.ticketsLink}</span>
-            </a>
-          ` : ''}
-          ${event.visaUrl ? `
-            <a href="${event.visaUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary-action">
-              <span>🛂 ${t.visaFormLink}</span>
-            </a>
-          ` : ''}
-          <a href="${event.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary-action">
-            <span>🌐 ${t.officialSite}</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Direct Clickable Official Links -->
+        <div class="pdf-card-actions">
+          <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-official-primary">
+            <span>🌐 ${t.officialSiteBtn}</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
               <line x1="10" y1="14" x2="21" y2="3"></line>
             </svg>
           </a>
+
+          ${e.ticketUrl && e.ticketUrl !== e.officialUrl ? `
+            <a href="${e.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-ticket-link">
+              <span>🎟️ ${t.ticketLinkBtn}</span>
+            </a>
+          ` : ''}
+
+          ${e.visaUrl ? `
+            <a href="${e.visaUrl}" target="_blank" rel="noopener noreferrer" class="btn-ticket-link">
+              <span>🛂 ${t.visaFormBtn}</span>
+            </a>
+          ` : ''}
+
+          ${!isModal ? `
+            <button class="btn-modal-expand" data-id="${e.id}">
+              <span>🔍 ${t.expandCardBtn}</span>
+            </button>
+          ` : ''}
         </div>
+      </div>
+    `;
+  }
+
+  function renderFullCards(events) {
+    elements.eventsGrid.innerHTML = '';
+    events.forEach(e => {
+      const { isExpired } = getEventStatus(e);
+      const card = document.createElement('article');
+      card.className = `pdf-card ${isExpired ? 'is-expired' : ''}`;
+      card.id = `card-${e.id}`;
+      card.innerHTML = buildCardInnerHtml(e, false);
+      elements.eventsGrid.appendChild(card);
+    });
+  }
+
+  // --- RENDER GENERAL INDEX TABLE (LIKE PAGES 2 & 3 OF PDF) ---
+  function renderIndexTable(events) {
+    const t = i18n[currentLang];
+    const rowsHtml = events.map((e, idx) => {
+      const { isExpired } = getEventStatus(e);
+      const title = currentLang === 'ku' ? e.title_ku : e.title_en;
+      const country = currentLang === 'ku' ? e.country_ku : e.country_en;
+      const city = currentLang === 'ku' ? e.city_ku : e.city_en;
+      const statusHtml = isExpired
+        ? `<span class="status-pill expired">⏱ ${t.statusExpired}</span>`
+        : `<span class="status-pill active">● ${t.statusUpcoming}</span>`;
+
+      return `
+        <tr>
+          <td><strong>${idx + 1}</strong></td>
+          <td>
+            <div style="font-weight: 800; color: #0f172a; cursor: pointer;" class="table-row-trigger" data-id="${e.id}">${title}</div>
+            <div style="font-size: 0.78rem; color: #64748b;">${currentLang === 'ku' ? e.field_ku : e.field_en}</div>
+          </td>
+          <td>
+            <div class="table-flag-cell">
+              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" style="width:28px;height:19px;" />
+              <span>${country} — ${city}</span>
+            </div>
+          </td>
+          <td dir="ltr" style="font-weight: 700;">${e.dateText_en}</td>
+          <td>${statusHtml}</td>
+          <td>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="table-link-btn">
+                🌐 ${t.officialSiteBtn}
+              </a>
+              <button class="btn-modal-expand" style="padding:0.35rem 0.65rem; font-size:0.78rem;" data-id="${e.id}">
+                🔍
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    elements.tableWrapper.innerHTML = `
+      <table class="pdf-index-table">
+        <thead>
+          <tr>
+            <th>${t.tableColPage}</th>
+            <th>${t.tableColName}</th>
+            <th>${t.tableColLocation}</th>
+            <th>${t.tableColDate}</th>
+            <th>${t.tableColStatus}</th>
+            <th>${t.tableColLinks}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // --- MODAL VIEW ---
+  function openModal(id) {
+    const events = getEvents();
+    const event = events.find(e => e.id === id);
+    if (!event) return;
+
+    activeModalEventId = id;
+    window.location.hash = `event=${id}`;
+    const t = i18n[currentLang];
+
+    elements.modalContent.innerHTML = `
+      <div class="modal-header">
+        <div style="font-weight:800; color:var(--foresight-teal); font-size:0.95rem;">
+          FORESIGHT — Visa Consultancy & Academic Services
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtnInner" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" style="padding:0;">
+        ${buildCardInnerHtml(event, true)}
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-expand" id="shareEventBtn">
+          🔗 ${t.shareBtn}
+        </button>
+        <button class="btn-modal-expand" id="modalCloseFooterBtn">
+          ✕
+        </button>
       </div>
     `;
 
     elements.modalOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Hook internal buttons
-    const closeBtn = document.getElementById('modalCloseBtnInner');
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    const close1 = document.getElementById('modalCloseBtnInner');
+    const close2 = document.getElementById('modalCloseFooterBtn');
+    if (close1) close1.addEventListener('click', closeModal);
+    if (close2) close2.addEventListener('click', closeModal);
 
     const shareBtn = document.getElementById('shareEventBtn');
     if (shareBtn) {
@@ -640,30 +661,25 @@
     if (!elements.toast) return;
     elements.toast.textContent = msg;
     elements.toast.classList.add('show');
-    setTimeout(() => {
-      elements.toast.classList.remove('show');
-    }, 2800);
+    setTimeout(() => elements.toast.classList.remove('show'), 2600);
   }
 
   function checkUrlHash() {
     const hash = window.location.hash;
     if (hash && hash.startsWith('#event=')) {
       const id = hash.replace('#event=', '');
-      setTimeout(() => openModal(id), 300);
+      setTimeout(() => openModal(id), 250);
     }
   }
 
-  // --- EVENT BINDINGS ---
+  // --- BIND EVENTS ---
   function bindEvents() {
-    // Language Switch
     if (elements.langBtn) {
       elements.langBtn.addEventListener('click', () => {
-        const nextLang = currentLang === 'ku' ? 'en' : 'ku';
-        setLanguage(nextLang);
+        setLanguage(currentLang === 'ku' ? 'en' : 'ku');
       });
     }
 
-    // Search Input
     if (elements.searchInput) {
       elements.searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value;
@@ -671,7 +687,17 @@
       });
     }
 
-    // Quick Pill Tabs
+    if (elements.viewModeGroup) {
+      elements.viewModeGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.view-mode-btn');
+        if (!btn) return;
+        document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        viewMode = btn.getAttribute('data-view');
+        applyFiltersAndRender();
+      });
+    }
+
     if (elements.pillsContainer) {
       elements.pillsContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.pill-btn');
@@ -683,7 +709,6 @@
       });
     }
 
-    // Country Select
     if (elements.countrySelect) {
       elements.countrySelect.addEventListener('change', (e) => {
         selectedCountry = e.target.value;
@@ -691,7 +716,6 @@
       });
     }
 
-    // Month & Year Select
     if (elements.monthYearSelect) {
       elements.monthYearSelect.addEventListener('change', (e) => {
         selectedMonthYear = e.target.value;
@@ -699,7 +723,6 @@
       });
     }
 
-    // Sort Select
     if (elements.sortSelect) {
       elements.sortSelect.addEventListener('change', (e) => {
         sortBy = e.target.value;
@@ -707,7 +730,6 @@
       });
     }
 
-    // Reset Filters Button
     if (elements.resetBtn) {
       elements.resetBtn.addEventListener('click', () => {
         activeTab = 'all';
@@ -726,21 +748,17 @@
       });
     }
 
-    // Card Details Click Delegation
-    if (elements.eventsGrid) {
-      elements.eventsGrid.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-details');
-        if (btn) {
-          const id = btn.getAttribute('data-id');
-          openModal(id);
-        }
-      });
-    }
-
-    // Modal Close
-    if (elements.modalCloseBtn) {
-      elements.modalCloseBtn.addEventListener('click', closeModal);
-    }
+    document.addEventListener('click', (e) => {
+      const expandBtn = e.target.closest('.btn-modal-expand[data-id]');
+      if (expandBtn) {
+        openModal(expandBtn.getAttribute('data-id'));
+        return;
+      }
+      const rowTrigger = e.target.closest('.table-row-trigger[data-id]');
+      if (rowTrigger) {
+        openModal(rowTrigger.getAttribute('data-id'));
+      }
+    });
 
     if (elements.modalOverlay) {
       elements.modalOverlay.addEventListener('click', (e) => {
@@ -754,7 +772,6 @@
       }
     });
 
-    // Back to top button
     window.addEventListener('scroll', () => {
       if (window.scrollY > 400) {
         elements.backToTop.classList.add('visible');
@@ -770,11 +787,9 @@
     }
   }
 
-  // Run on DOM load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
 })();
