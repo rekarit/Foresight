@@ -1,6 +1,6 @@
 /**
- * Foresight Conferences & Exhibitions - Main Engine
- * Clean, responsive, bilingual (KU/EN), dark/light mode, PDF-data accurate.
+ * Foresight Conferences & Exhibitions - Modern Clean Interactive Engine
+ * Uncluttered 3/2/1-col responsive cards + full-detail modal/bottom-sheet + table index.
  */
 
 (function () {
@@ -8,18 +8,16 @@
 
   const getEvents = () => window.FORESIGHT_EVENTS || (typeof FORESIGHT_EVENTS !== 'undefined' ? FORESIGHT_EVENTS : []);
 
-  // --- STATE ---
   let currentLang = localStorage.getItem('foresight_lang') || 'ku';
   let currentTheme = localStorage.getItem('foresight_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   let activeTab = 'all';
   let selectedCountry = 'all';
   let selectedMonthYear = 'all';
   let sortBy = 'pdf-order';
-  let viewMode = 'cards';
+  let viewMode = 'cards'; // 'cards' | 'table'
   let searchQuery = '';
   let activeModalEventId = null;
 
-  // --- TRANSLATIONS ---
   const i18n = {
     ku: {
       siteTitle: "کۆنفرانس و پێشانگاکانی فۆرسایت | FORESIGHT",
@@ -30,13 +28,13 @@
       statMedical: "پزیشکی",
       statTech: "ئەندازیاری و بازرگانی",
       statCountries: "وڵات",
-      searchPlaceholder: "گەڕان بەپێی ناوی کۆنفرانس، وڵات، شار یان بوار...",
-      viewCards: "کارتەکان",
-      viewSingle: "پەڕە",
+      searchPlaceholder: "گەڕان بەپێی ناو، وڵات، شار یان بوار...",
+      filtersBtn: "فلتەرەکان",
+      viewCards: "کارت",
       viewTable: "پێرست",
       tabAll: "هەمووی",
-      tabMedical: "بەشی یەکەم: پزیشکی",
-      tabTech: "بەشی دووەم: ئەندازیاری و بازرگانی",
+      tabMedical: "پزیشکی",
+      tabTech: "ئەندازیاری و بازرگانی",
       tabUpcoming: "بەردەستەکان",
       tabExpired: "بەسەرچووەکان",
       filterCountryLabel: "وڵات",
@@ -44,7 +42,7 @@
       filterDateLabel: "مانگ و ساڵ",
       filterDateAll: "هەموو مانگەکان",
       filterSortLabel: "ڕیزبەندی",
-      sortPdfOrder: "ڕیزبەندیی پیدیئێف",
+      sortPdfOrder: "ڕیزبەندیی فەرمی",
       sortDateAsc: "نزیکترین بەروار",
       sortDateDesc: "دوورترین بەروار",
       sortTitle: "ئەلفوبێ",
@@ -59,21 +57,19 @@
       metaDate: "بەرواری کۆنفرانس",
       metaVenue: "شوێنی بەڕێوەچوون",
       audienceHeading: "تایبەتە بە کێ؟",
-      officialSiteBtn: "سەردانی ماڵپەڕی فەرمی",
-      ticketLinkBtn: "زانیاریی زیاتر / تۆمارکردن",
-      expandCardBtn: "پیشاندانی تەواو",
+      detailsBtn: "وردەکارییەکان",
+      officialSiteBtn: "ماڵپەڕی فەرمی",
+      ticketLinkBtn: "زانیاری / تۆمارکردن",
       shareBtn: "کۆپیکردنی بەستەر",
       copiedNotice: "بەستەری کۆنفرانسەکە کۆپی کرا",
-      tableColPage: "لاپەڕە",
+      tableColPage: "#",
       tableColName: "ناوی کۆنفرانس / پێشانگا",
       tableColLocation: "وڵات و شار",
       tableColDate: "بەروار",
       tableColStatus: "دۆخ",
-      tableColLinks: "ماڵپەڕی فەرمی",
+      tableColLinks: "بەستەر",
       emptyTitle: "هیچ کۆنفرانسێک نەدۆزرایەوە",
-      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان لابدە.",
-      footerDesc: "سەرپەرشتیی تەواوی ڕێکارەکانی تۆمارکردن لە کۆنفرانس و پێشانگا نێودەوڵەتییەکان، وەرگرتنی بانگهێشتنامەی فەرمی و ڕێکخستنی فایلی ڤیزا.",
-      footerRights: "سەرجەم مافەکان پارێزراوە بۆ FORESIGHT © 2026–2027"
+      emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان لابدە."
     },
     en: {
       siteTitle: "FORESIGHT Conferences & Exhibitions",
@@ -84,13 +80,13 @@
       statMedical: "Medical",
       statTech: "Engineering & Trade",
       statCountries: "Countries",
-      searchPlaceholder: "Search by conference name, country, city, or field...",
+      searchPlaceholder: "Search by name, country, city, or field...",
+      filtersBtn: "Filters",
       viewCards: "Cards",
-      viewSingle: "Page",
       viewTable: "Index",
       tabAll: "All",
-      tabMedical: "Part 1: Medical",
-      tabTech: "Part 2: Engineering & Trade",
+      tabMedical: "Medical",
+      tabTech: "Engineering & Trade",
       tabUpcoming: "Active",
       tabExpired: "Expired",
       filterCountryLabel: "Country",
@@ -98,7 +94,7 @@
       filterDateLabel: "Month & Year",
       filterDateAll: "All Months",
       filterSortLabel: "Sort",
-      sortPdfOrder: "PDF Order",
+      sortPdfOrder: "Official Order",
       sortDateAsc: "Soonest Date",
       sortDateDesc: "Latest Date",
       sortTitle: "Alphabetical",
@@ -113,25 +109,22 @@
       metaDate: "Conference Date",
       metaVenue: "Venue",
       audienceHeading: "Who Should Attend?",
-      officialSiteBtn: "Visit Official Website",
-      ticketLinkBtn: "Information / Registration",
-      expandCardBtn: "Full View",
+      detailsBtn: "Details",
+      officialSiteBtn: "Official Site",
+      ticketLinkBtn: "Info / Registration",
       shareBtn: "Copy Link",
       copiedNotice: "Event link copied",
-      tableColPage: "Page",
+      tableColPage: "#",
       tableColName: "Conference / Exhibition Name",
       tableColLocation: "Country & City",
       tableColDate: "Date",
       tableColStatus: "Status",
-      tableColLinks: "Official Link",
+      tableColLinks: "Links",
       emptyTitle: "No Matching Conferences Found",
-      emptyDesc: "Try adjusting your search or resetting the filters.",
-      footerDesc: "Complete supervision of international conference registration, official invitation letter retrieval, and visa dossier preparation.",
-      footerRights: "All Rights Reserved © FORESIGHT 2026–2027"
+      emptyDesc: "Try adjusting your search or resetting the filters."
     }
   };
 
-  // --- HELPERS ---
   function getEventStatus(event) {
     const now = new Date();
     const end = new Date((event.endDate || event.startDate) + 'T23:59:59');
@@ -162,6 +155,9 @@
     langBtn: document.getElementById('langToggleBtn'),
     langText: document.getElementById('langText'),
     searchInput: document.getElementById('searchInput'),
+    filterToggleBtn: document.getElementById('filterToggleBtn'),
+    advancedFiltersRow: document.getElementById('advancedFiltersRow'),
+    activeFilterDot: document.getElementById('activeFilterDot'),
     pillsContainer: document.getElementById('pillsContainer'),
     countrySelect: document.getElementById('countrySelect'),
     monthYearSelect: document.getElementById('monthYearSelect'),
@@ -294,6 +290,12 @@
     setEl('badgeCountExpired', expired);
   }
 
+  function updateActiveFilterIndicator() {
+    if (!elements.activeFilterDot) return;
+    const hasFilter = selectedCountry !== 'all' || selectedMonthYear !== 'all' || sortBy !== 'pdf-order';
+    elements.activeFilterDot.style.display = hasFilter ? 'block' : 'none';
+  }
+
   function applyFiltersAndRender() {
     const events = getEvents();
     let list = [...events];
@@ -344,6 +346,8 @@
       });
     }
 
+    updateActiveFilterIndicator();
+
     if (elements.resultsCount) elements.resultsCount.textContent = list.length;
     if (elements.resultsTotal) elements.resultsTotal.textContent = events.length;
 
@@ -363,147 +367,97 @@
     } else {
       elements.tableWrapper.style.display = 'none';
       elements.eventsGrid.style.display = 'grid';
-      elements.eventsGrid.classList.toggle('single-col-mode', viewMode === 'single');
-      renderFullCards(list);
+      renderCleanCards(list);
     }
   }
 
-  function buildCardInnerHtml(e, isModal = false) {
+  function renderCleanCards(events) {
     const t = i18n[currentLang];
-    const { isExpired } = getEventStatus(e);
-
-    const country = currentLang === 'ku' ? e.country_ku : e.country_en;
-    const city = currentLang === 'ku' ? e.city_ku : e.city_en;
-    const title = currentLang === 'ku' ? e.title_ku : e.title_en;
-    const headline = currentLang === 'ku' ? e.headline_ku : e.headline_en;
-    const overview = currentLang === 'ku' ? e.overview_ku : e.overview_en;
-    const audience = currentLang === 'ku' ? e.audience_ku : e.audience_en;
-    const foresightTitle = currentLang === 'ku' ? e.foresight_title_ku : e.foresight_title_en;
-    const foresightText = currentLang === 'ku' ? e.foresight_ku : e.foresight_en;
-
-    const statusBadgeHtml = isExpired
-      ? `<span class="status-pill expired">${t.statusExpired}</span>`
-      : `<span class="status-pill active">${t.statusUpcoming}</span>`;
-
-    const categoryBadgeHtml = e.category === 'medical'
-      ? `<span class="cat-pill medical">${t.badgeMedical}</span>`
-      : `<span class="cat-pill non-medical">${t.badgeTech}</span>`;
-
-    const audienceBulletsHtml = (audience || []).map(item => `<li><span>${item}</span></li>`).join('');
-
-    return `
-      <div class="pdf-card-topbar">
-        <div class="country-flag-pill">
-          <img src="${e.flagImg}" alt="${country}" class="country-flag-img" loading="lazy" />
-          <span class="country-city-name">${country} — ${city}</span>
-        </div>
-        <div class="top-badges-wrap">
-          ${categoryBadgeHtml}
-          ${statusBadgeHtml}
-          <span class="date-pill-badge">${e.dateText_en}</span>
-        </div>
-      </div>
-
-      <div class="pdf-card-content">
-        <div>
-          <div class="pdf-small-title">${title}</div>
-          <h3 class="pdf-big-headline">${headline}</h3>
-        </div>
-
-        <p class="pdf-overview-text">${overview}</p>
-
-        <div class="pdf-photo-banner">
-          <img src="${e.image}" alt="${title}" loading="lazy" />
-        </div>
-
-        <div class="pdf-meta-grid">
-          <div class="pdf-meta-col">
-            <span class="pdf-meta-label">${t.metaCountryCity}</span>
-            <span class="pdf-meta-val">${country} — ${city}</span>
-          </div>
-          <div class="pdf-meta-col">
-            <span class="pdf-meta-label">${t.metaDate}</span>
-            <span class="pdf-meta-val" dir="ltr" style="text-align: start;">${e.dateText_en}</span>
-          </div>
-          <div class="pdf-meta-col">
-            <span class="pdf-meta-label">${t.metaVenue}</span>
-            <span class="pdf-meta-val">${e.venue}</span>
-          </div>
-        </div>
-
-        <div class="pdf-audience-box">
-          <div class="pdf-box-heading">
-            <span class="teal-dot"></span>
-            <span>${t.audienceHeading}</span>
-          </div>
-          <ul class="pdf-audience-list">
-            ${audienceBulletsHtml}
-          </ul>
-        </div>
-
-        <div class="pdf-foresight-box">
-          <div class="pdf-foresight-title">${foresightTitle}</div>
-          <div class="pdf-foresight-text">${foresightText}</div>
-        </div>
-
-        <div class="pdf-card-actions">
-          <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-official-primary">
-            <span>${t.officialSiteBtn}</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
-
-          ${e.ticketUrl && e.ticketUrl !== e.officialUrl ? `
-            <a href="${e.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-secondary-link">
-              <span>${t.ticketLinkBtn}</span>
-            </a>
-          ` : ''}
-
-          ${!isModal ? `
-            <button class="btn-modal-expand" data-id="${e.id}">
-              <span>${t.expandCardBtn}</span>
-            </button>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-
-  function renderFullCards(events) {
     elements.eventsGrid.innerHTML = '';
+
     events.forEach(e => {
       const { isExpired } = getEventStatus(e);
+      const country = currentLang === 'ku' ? e.country_ku : e.country_en;
+      const city = currentLang === 'ku' ? e.city_ku : e.city_en;
+      const title = currentLang === 'ku' ? e.title_ku : e.title_en;
+      const headline = currentLang === 'ku' ? e.headline_ku : e.headline_en;
+      const categoryLabel = e.category === 'medical' ? t.badgeMedical : t.badgeTech;
+      const statusLabel = isExpired ? t.statusExpired : t.statusUpcoming;
+      const statusClass = isExpired ? 'status-expired' : 'status-active';
+
       const card = document.createElement('article');
-      card.className = `pdf-card ${isExpired ? 'is-expired' : ''}`;
+      card.className = `event-card ${isExpired ? 'is-expired' : ''}`;
       card.id = `card-${e.id}`;
-      card.innerHTML = buildCardInnerHtml(e, false);
+
+      card.innerHTML = `
+        <div class="card-media open-modal-trigger" data-id="${e.id}">
+          <img src="${e.image}" alt="${title}" loading="lazy" />
+          <div class="card-media-badges">
+            <span class="glass-badge cat">${categoryLabel}</span>
+            <span class="glass-badge ${statusClass}">${statusLabel}</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-meta-line">
+            <div class="card-location-pill">
+              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" loading="lazy" />
+              <span>${country} — ${city}</span>
+            </div>
+            <span class="card-date-text">${e.dateText_en}</span>
+          </div>
+
+          <h3 class="card-title open-modal-trigger" data-id="${e.id}">${title}</h3>
+          <p class="card-headline">${headline}</p>
+
+          <div class="card-venue-line">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>${e.venue}</span>
+          </div>
+
+          <div class="card-footer">
+            <button class="btn-card-details open-modal-trigger" data-id="${e.id}">
+              ${t.detailsBtn}
+            </button>
+            <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-official">
+              <span>${t.officialSiteBtn}</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          </div>
+        </div>
+      `;
+
       elements.eventsGrid.appendChild(card);
     });
   }
 
   function renderIndexTable(events) {
     const t = i18n[currentLang];
-    const rowsHtml = events.map(e => {
+    const rowsHtml = events.map((e, idx) => {
       const { isExpired } = getEventStatus(e);
       const title = currentLang === 'ku' ? e.title_ku : e.title_en;
       const country = currentLang === 'ku' ? e.country_ku : e.country_en;
       const city = currentLang === 'ku' ? e.city_ku : e.city_en;
       const statusHtml = isExpired
-        ? `<span class="status-pill expired">${t.statusExpired}</span>`
-        : `<span class="status-pill active">${t.statusUpcoming}</span>`;
+        ? `<span class="table-status-badge expired">${t.statusExpired}</span>`
+        : `<span class="table-status-badge active">${t.statusUpcoming}</span>`;
 
       return `
         <tr>
-          <td><strong>${e.pdfPage || '-'}</strong></td>
+          <td><strong>${e.pdfPage || (idx + 1)}</strong></td>
           <td>
-            <div style="font-weight: 700; color: var(--text-primary); cursor: pointer;" class="table-row-trigger" data-id="${e.id}">${title}</div>
+            <div style="font-weight: 700; color: var(--text-primary); cursor: pointer;" class="open-modal-trigger" data-id="${e.id}">${title}</div>
           </td>
           <td>
             <div class="table-flag-cell">
-              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" style="width:24px;height:16px;" />
+              <img src="${e.flagImg}" alt="${country}" class="country-flag-img" />
               <span>${country} — ${city}</span>
             </div>
           </td>
@@ -514,8 +468,8 @@
               <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="table-link-btn">
                 ${t.officialSiteBtn}
               </a>
-              <button class="btn-modal-expand" style="padding:0.32rem 0.6rem; font-size:0.78rem;" data-id="${e.id}">
-                ${t.expandCardBtn}
+              <button class="btn-card-details open-modal-trigger" style="padding:0 0.65rem; height:29px; flex:none;" data-id="${e.id}">
+                ${t.detailsBtn}
               </button>
             </div>
           </td>
@@ -544,41 +498,102 @@
 
   function openModal(id) {
     const events = getEvents();
-    const event = events.find(e => e.id === id);
-    if (!event) return;
+    const e = events.find(ev => ev.id === id);
+    if (!e) return;
 
     activeModalEventId = id;
     window.location.hash = `event=${id}`;
+
     const t = i18n[currentLang];
+    const { isExpired } = getEventStatus(e);
+    const country = currentLang === 'ku' ? e.country_ku : e.country_en;
+    const city = currentLang === 'ku' ? e.city_ku : e.city_en;
+    const title = currentLang === 'ku' ? e.title_ku : e.title_en;
+    const headline = currentLang === 'ku' ? e.headline_ku : e.headline_en;
+    const overview = currentLang === 'ku' ? e.overview_ku : e.overview_en;
+    const audience = currentLang === 'ku' ? e.audience_ku : e.audience_en;
+    const foresightTitle = currentLang === 'ku' ? e.foresight_title_ku : e.foresight_title_en;
+    const foresightText = currentLang === 'ku' ? e.foresight_ku : e.foresight_en;
+    const statusLabel = isExpired ? t.statusExpired : t.statusUpcoming;
+
+    const audienceBullets = (audience || []).map(item => `<li><span>${item}</span></li>`).join('');
 
     elements.modalContent.innerHTML = `
       <div class="modal-header">
-        <div style="font-weight:700; color:var(--accent); font-size:0.9rem;">
-          FORESIGHT — ${currentLang === 'ku' ? 'لاپەڕە' : 'Page'} ${event.pdfPage}
+        <div class="modal-header-tag">
+          ${country} — ${city} · <span class="table-status-badge ${isExpired ? 'expired' : 'active'}">${statusLabel}</span>
         </div>
         <button class="modal-close-btn" id="modalCloseBtnInner" aria-label="Close">✕</button>
       </div>
+
       <div class="modal-body">
-        ${buildCardInnerHtml(event, true)}
+        <div class="modal-photo">
+          <img src="${e.image}" alt="${title}" />
+        </div>
+
+        <div class="modal-titles">
+          <div class="modal-sub">${title}</div>
+          <h2>${headline}</h2>
+        </div>
+
+        <p class="modal-overview">${overview}</p>
+
+        <div class="modal-meta-grid">
+          <div class="modal-meta-col">
+            <span class="modal-meta-label">${t.metaCountryCity}</span>
+            <span class="modal-meta-val">${country} — ${city}</span>
+          </div>
+          <div class="modal-meta-col">
+            <span class="modal-meta-label">${t.metaDate}</span>
+            <span class="modal-meta-val" dir="ltr" style="text-align: start;">${e.dateText_en}</span>
+          </div>
+          <div class="modal-meta-col">
+            <span class="modal-meta-label">${t.metaVenue}</span>
+            <span class="modal-meta-val">${e.venue}</span>
+          </div>
+        </div>
+
+        <div class="modal-audience-box">
+          <div class="modal-audience-title">${t.audienceHeading}</div>
+          <ul class="modal-audience-list">
+            ${audienceBullets}
+          </ul>
+        </div>
+
+        <div class="modal-foresight-box">
+          <div class="modal-foresight-title">${foresightTitle}</div>
+          <div class="modal-foresight-text">${foresightText}</div>
+        </div>
       </div>
+
       <div class="modal-footer">
-        <button class="btn-modal-expand" id="shareEventBtn">${t.shareBtn}</button>
-        <button class="btn-modal-expand" id="modalCloseFooterBtn">✕</button>
+        <button class="btn-card-details" id="shareEventBtn">${t.shareBtn}</button>
+        ${e.ticketUrl && e.ticketUrl !== e.officialUrl ? `
+          <a href="${e.ticketUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-details">
+            ${t.ticketLinkBtn}
+          </a>
+        ` : ''}
+        <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-official">
+          <span>${t.officialSiteBtn}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
       </div>
     `;
 
     elements.modalOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    const close1 = document.getElementById('modalCloseBtnInner');
-    const close2 = document.getElementById('modalCloseFooterBtn');
-    if (close1) close1.addEventListener('click', closeModal);
-    if (close2) close2.addEventListener('click', closeModal);
+    const closeBtn = document.getElementById('modalCloseBtnInner');
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
     const shareBtn = document.getElementById('shareEventBtn');
     if (shareBtn) {
       shareBtn.addEventListener('click', () => {
-        const url = window.location.origin + window.location.pathname + `#event=${event.id}`;
+        const url = window.location.origin + window.location.pathname + `#event=${e.id}`;
         if (navigator.clipboard) {
           navigator.clipboard.writeText(url).then(() => showToast(t.copiedNotice));
         } else {
@@ -599,14 +614,14 @@
     if (!elements.toast) return;
     elements.toast.textContent = msg;
     elements.toast.classList.add('show');
-    setTimeout(() => elements.toast.classList.remove('show'), 2500);
+    setTimeout(() => elements.toast.classList.remove('show'), 2400);
   }
 
   function checkUrlHash() {
     const hash = window.location.hash;
     if (hash && hash.startsWith('#event=')) {
       const id = hash.replace('#event=', '');
-      setTimeout(() => openModal(id), 250);
+      setTimeout(() => openModal(id), 200);
     }
   }
 
@@ -620,6 +635,14 @@
     if (elements.langBtn) {
       elements.langBtn.addEventListener('click', () => {
         setLanguage(currentLang === 'ku' ? 'en' : 'ku');
+      });
+    }
+
+    if (elements.filterToggleBtn && elements.advancedFiltersRow) {
+      elements.filterToggleBtn.addEventListener('click', () => {
+        const isOpen = elements.advancedFiltersRow.classList.toggle('mobile-open');
+        elements.filterToggleBtn.classList.toggle('is-open', isOpen);
+        elements.filterToggleBtn.setAttribute('aria-expanded', isOpen);
       });
     }
 
@@ -692,14 +715,9 @@
     }
 
     document.addEventListener('click', (e) => {
-      const expandBtn = e.target.closest('.btn-modal-expand[data-id]');
-      if (expandBtn) {
-        openModal(expandBtn.getAttribute('data-id'));
-        return;
-      }
-      const rowTrigger = e.target.closest('.table-row-trigger[data-id]');
-      if (rowTrigger) {
-        openModal(rowTrigger.getAttribute('data-id'));
+      const trigger = e.target.closest('.open-modal-trigger[data-id]');
+      if (trigger) {
+        openModal(trigger.getAttribute('data-id'));
       }
     });
 

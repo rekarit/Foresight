@@ -2,20 +2,20 @@
 <html lang="ku" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title data-i18n="siteTitle">کۆنفرانس و پێشانگاکانی فۆرسایت | FORESIGHT</title>
   <meta name="description" content="ڕێبەری فەرمیی کۆنفرانس و پێشانگا نێودەوڵەتییەکانی FORESIGHT Visa Consultancy & Academic Services." />
 
-  <!-- Fonts: Noto Naskh Arabic (matches PDF typography) + IBM Plex Sans Arabic + Plus Jakarta Sans -->
+  <!-- Fonts: Noto Naskh Arabic + IBM Plex Sans Arabic + Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=20261121_v3" />
+  <link rel="stylesheet" href="style.css?v=20261122_v6" />
 </head>
 <body>
 
-  <!-- ================= STICKY HEADER ================= -->
+  <!-- ================= STICKY GLASS HEADER ================= -->
   <header class="site-header">
     <div class="container header-inner">
       <a href="./" class="brand-wrapper">
@@ -45,7 +45,7 @@
         </button>
 
         <button class="lang-switch-btn" id="langToggleBtn" aria-label="Toggle language">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="2" y1="12" x2="22" y2="12"></line>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
@@ -58,7 +58,7 @@
 
   <!-- ================= MAIN CONTENT ================= -->
   <main>
-    <!-- CLEAN PAGE HEADER (NO AI HERO / NO EXTRA SUBTITLE) -->
+    <!-- MINIMALIST PAGE HEADER -->
     <section class="page-intro">
       <div class="container">
         <div class="page-intro-inner">
@@ -67,39 +67,27 @@
             <h1 class="page-title" data-i18n="heroTitle">پێرستی گشتیی کۆنفرانس و پێشانگاکان</h1>
           </div>
 
-          <div class="summary-strip">
-            <div class="summary-cell">
-              <strong id="statTotalNum">37</strong>
-              <span data-i18n="statTotal">کۆی گشتی</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-cell">
-              <strong id="statMedNum">17</strong>
-              <span data-i18n="statMedical">پزیشکی</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-cell">
-              <strong id="statTechNum">20</strong>
-              <span data-i18n="statTech">ئەندازیاری و بازرگانی</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-cell">
-              <strong id="statCountriesNum">11</strong>
-              <span data-i18n="statCountries">وڵات</span>
-            </div>
+          <div class="summary-inline">
+            <span class="summary-item"><strong id="statTotalNum">39</strong> <span data-i18n="statTotal">کۆی گشتی</span></span>
+            <span class="summary-dot">·</span>
+            <span class="summary-item"><strong id="statMedNum">17</strong> <span data-i18n="statMedical">پزیشکی</span></span>
+            <span class="summary-dot">·</span>
+            <span class="summary-item"><strong id="statTechNum">22</strong> <span data-i18n="statTech">ئەندازیاری و بازرگانی</span></span>
+            <span class="summary-dot">·</span>
+            <span class="summary-item"><strong id="statCountriesNum">11</strong> <span data-i18n="statCountries">وڵات</span></span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- FILTERS & CONTROLS -->
+    <!-- UNIFIED CLEAN FILTER TOOLBAR -->
     <div class="container">
-      <section class="controls-panel" aria-label="Filters and Search">
+      <section class="toolbar-shell" aria-label="Filters and Search">
         
-        <div class="search-bar-row">
+        <div class="toolbar-top">
           <div class="search-input-box">
             <span class="search-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
@@ -108,43 +96,50 @@
               type="text" 
               id="searchInput" 
               class="search-input" 
-              placeholder="گەڕان بەپێی ناوی کۆنفرانس، وڵات، شار یان بوار..." 
+              placeholder="گەڕان بەپێی ناو، وڵات، شار یان بوار..." 
               autocomplete="off" 
             />
           </div>
 
-          <div class="view-mode-group" id="viewModeGroup">
-            <button class="view-mode-btn active" data-view="cards" title="Card View">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              <span data-i18n="viewCards">کارتەکان</span>
+          <div class="toolbar-actions-right">
+            <button class="filter-drawer-toggle" id="filterToggleBtn" aria-expanded="false" aria-controls="advancedFiltersRow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              <span data-i18n="filtersBtn">فلتەرەکان</span>
+              <span class="active-filter-dot" id="activeFilterDot" style="display: none;"></span>
             </button>
-            <button class="view-mode-btn" data-view="single" title="Single Column">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect></svg>
-              <span data-i18n="viewSingle">پەڕە</span>
-            </button>
-            <button class="view-mode-btn" data-view="table" title="Index Table">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-              <span data-i18n="viewTable">پێرست</span>
-            </button>
+
+            <div class="view-mode-group" id="viewModeGroup">
+              <button class="view-mode-btn active" data-view="cards" title="Card Grid" aria-label="Card Grid">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+                <span class="view-btn-label" data-i18n="viewCards">کارت</span>
+              </button>
+              <button class="view-mode-btn" data-view="table" title="Index Table" aria-label="Index Table">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <span class="view-btn-label" data-i18n="viewTable">پێرست</span>
+              </button>
+            </div>
           </div>
         </div>
 
+        <!-- Horizontal Scrollable Category Pills -->
         <div class="quick-pills-row" id="pillsContainer">
           <button class="pill-btn active" data-tab="all">
             <span data-i18n="tabAll">هەمووی</span>
-            <span class="pill-badge" id="badgeCountAll">37</span>
+            <span class="pill-badge" id="badgeCountAll">39</span>
           </button>
           <button class="pill-btn" data-tab="medical">
-            <span data-i18n="tabMedical">بەشی یەکەم: پزیشکی</span>
+            <span data-i18n="tabMedical">پزیشکی</span>
             <span class="pill-badge" id="badgeCountMed">17</span>
           </button>
           <button class="pill-btn" data-tab="non-medical">
-            <span data-i18n="tabTech">بەشی دووەم: ئەندازیاری و بازرگانی</span>
-            <span class="pill-badge" id="badgeCountTech">20</span>
+            <span data-i18n="tabTech">ئەندازیاری و بازرگانی</span>
+            <span class="pill-badge" id="badgeCountTech">22</span>
           </button>
           <button class="pill-btn" data-tab="upcoming">
             <span data-i18n="tabUpcoming">بەردەستەکان</span>
-            <span class="pill-badge" id="badgeCountActive">37</span>
+            <span class="pill-badge" id="badgeCountActive">39</span>
           </button>
           <button class="pill-btn" data-tab="expired">
             <span data-i18n="tabExpired">بەسەرچووەکان</span>
@@ -152,7 +147,8 @@
           </button>
         </div>
 
-        <div class="dropdowns-row">
+        <!-- Collapsible on Mobile, Inline on Desktop -->
+        <div class="dropdowns-row" id="advancedFiltersRow">
           <div class="select-group">
             <label class="select-label" for="countrySelect" data-i18n="filterCountryLabel">وڵات</label>
             <select id="countrySelect" class="select-control">
@@ -170,7 +166,7 @@
           <div class="select-group">
             <label class="select-label" for="sortSelect" data-i18n="filterSortLabel">ڕیزبەندی</label>
             <select id="sortSelect" class="select-control">
-              <option value="pdf-order" data-i18n="sortPdfOrder">ڕیزبەندیی پیدیئێف</option>
+              <option value="pdf-order" data-i18n="sortPdfOrder">ڕیزبەندیی فەرمی</option>
               <option value="date-asc" data-i18n="sortDateAsc">نزیکترین بەروار</option>
               <option value="date-desc" data-i18n="sortDateDesc">دوورترین بەروار</option>
               <option value="title" data-i18n="sortTitle">ئەلفوبێ</option>
@@ -192,14 +188,14 @@
       <div class="results-toolbar">
         <div class="results-count">
           <span data-i18n="resultsCount">ئەنجام:</span>
-          <strong id="resultsCountNumber">37</strong>
-          <span>/</span>
-          <span id="resultsTotalNumber">37</span>
+          <strong id="resultsCountNumber">39</strong>
+          <span class="results-sep">/</span>
+          <span id="resultsTotalNumber">39</span>
           <span data-i18n="eventsWord">کۆنفرانس</span>
         </div>
       </div>
 
-      <!-- CARDS GRID -->
+      <!-- MODERN CLEAN CARDS GRID -->
       <section class="events-grid" id="eventsGrid" aria-label="Conferences Grid"></section>
 
       <!-- INDEX TABLE VIEW -->
@@ -213,7 +209,7 @@
     </div>
   </main>
 
-  <!-- ================= DETAILS MODAL ================= -->
+  <!-- ================= DETAILS MODAL / MOBILE BOTTOM SHEET ================= -->
   <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
     <div class="modal-container" id="modalContentArea"></div>
   </div>
@@ -221,13 +217,13 @@
   <!-- ================= TOAST & BACK TO TOP ================= -->
   <div class="toast-notice" id="toastNotice"></div>
   <button class="back-to-top" id="backToTopBtn" aria-label="Back to top">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
       <line x1="12" y1="19" x2="12" y2="5"></line>
       <polyline points="5 12 12 5 19 12"></polyline>
     </svg>
   </button>
 
-  <script src="data/events.js?v=20261122_v5"></script>
-  <script src="app.js?v=20261122_v5"></script>
+  <script src="data/events.js?v=20261122_v6"></script>
+  <script src="app.js?v=20261122_v6"></script>
 </body>
 </html>
