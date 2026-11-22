@@ -1562,6 +1562,90 @@ const events = [
     foresight_title_en: "Foresight Support for German Visa",
     foresight_ku: "تیمی فۆرسایت تەواوی ڕێکارەکانی تۆمارکردن، بەدەستهێنانی بانگهێشتنامەی فەرمیی پێشانگاکە لە نورنبرێگ و ڕێکخستنی فایلی ڤیزای شنگنی ئەڵمانیا بە ئەستۆ دەگرێت.",
     foresight_en: "Foresight takes responsibility for all registration steps, official Nuremberg exhibition invitation retrieval, and German Schengen visa file organization."
+  },
+  {
+    id: "rt-stuttgart-2027",
+    pdfPage: null,
+    image: "assets/images/event_rt_stuttgart_2027.jpg",
+    flagImg: "assets/flags/de.svg",
+    countryCode: "de",
+    title_ku: "پێشانگای جیهانیی R+T Stuttgart 2027",
+    title_en: "R+T Stuttgart 2027",
+    headline_ku: "ڤیزای شنگن بە بانگهێشتنامەی پێشانگای تەکنەلۆژیای بینا و تەلارسازی لە ئەڵمانیا",
+    headline_en: "Schengen Visa with Building Technology & Architecture Expo Invitation in Germany",
+    category: "non-medical",
+    field_ku: "بیناسازی، دەرگا و دەروازەکان، کەپەنک، تەلارسازی و تەکنەلۆژیای بینا",
+    field_en: "Construction, Doors, Gates, Shutters, Architecture & Building Technology",
+    city_ku: "شتوتگارت",
+    city_en: "Stuttgart",
+    country_ku: "ئەڵمانیا",
+    country_en: "Germany",
+    venue: "Messe Stuttgart, Germany",
+    startDate: "2027-02-15",
+    endDate: "2027-02-19",
+    dateText_ku: "15–19 February 2027",
+    dateText_en: "15–19 February 2027",
+    officialUrl: "https://www.messe-stuttgart.de/r-t/en/en-r-t-2027-all-key-information-for-your-visit/",
+    overview_ku: "پێشانگای پێشەنگی جیهانی بۆ تەکنەلۆژیای بیناسازی، دەرگا و دەروازە پیشەسازییەکان، کەپەنکی زیرەک، سیستەمی سێبەرکردن و تەلارسازیی مۆدێرن لە شاری شتوتگارتی ئەڵمانیا.",
+    overview_en: "The world's leading trade fair for roller shutters, doors/gates, sun shading systems, architecture, and modern building technology at Messe Stuttgart, Germany.",
+    audience_ku: [
+      "ئەندازیارانی تەلارسازی، شارستانی و دیزاینەرانی ڕووکاری باڵەخانە.",
+      "کۆمپانیاکانی بیناسازی، بەڵێندەران و بەڕێوەبەرانی پڕۆژەکان.",
+      "بازرگانان و هاوردەکارانی دەرگا، دەروازە، کەپەنک و سیستەمی ئۆتۆماتیکی.",
+      "بەرهەمهێنەران و تەکنیکارانی تەکنەلۆژیای بینای زیرەک."
+    ],
+    audience_en: [
+      "Architects, Civil Engineers, and Building Facade Designers.",
+      "Construction Companies, Contractors, and Project Managers.",
+      "Importers and Traders of Doors, Gates, Shutters, and Automated Systems.",
+      "Smart Building Technology Manufacturers and Technicians."
+    ],
+    foresight_title_ku: "پشتگیریی فۆرسایت بۆ ڤیزای ئەڵمانیا",
+    foresight_title_en: "Foresight Support for German Visa",
+    foresight_ku: "تیمی فۆرسایت تەواوی ڕێکارەکانی تۆمارکردن لە پۆرتالی Messe Stuttgart، وەرگرتنی بانگهێشتنامەی فەرمی و ئامادەکردنی دۆسیەی ڤیزای شنگنی ئەڵمانیا بە ئەستۆ دەگرێت.",
+    foresight_en: "Foresight manages all registration steps via Messe Stuttgart, official invitation letter retrieval, and complete German Schengen visa dossier preparation."
+  },
+  {
+    id: "provada-2027",
+    pdfPage: null,
+    image: "assets/images/event_provada_2027.jpg",
+    flagImg: "assets/flags/nl.svg",
+    countryCode: "nl",
+    title_ku: "پێشانگای نێودەوڵەتیی خانووبەرە و وەبەرهێنان (PROVADA 2027)",
+    title_en: "PROVADA 2027 (Amsterdam Real Estate Fair)",
+    headline_ku: "ڤیزای شنگن بە بانگهێشتنامەی گەورەترین پێشانگای خانووبەرە لە ئەمستەردام",
+    headline_en: "Schengen Visa with Largest Real Estate Exhibition Invitation in Amsterdam",
+    category: "non-medical",
+    field_ku: "خانووبەرە (Real Estate)، گەشەپێدانی شارستانی و وەبەرهێنان",
+    field_en: "Real Estate, Urban Development & Property Investment",
+    city_ku: "ئەمستەردام",
+    city_en: "Amsterdam",
+    country_ku: "هۆڵەندا",
+    country_en: "Netherlands",
+    venue: "RAI Amsterdam",
+    startDate: "2027-06-15",
+    endDate: "2027-06-17",
+    dateText_ku: "15–17 June 2027",
+    dateText_en: "15–17 June 2027",
+    officialUrl: "https://www.provada.nl/en",
+    overview_ku: "گەورەترین کۆبوونەوە و پێشانگای ساڵانەی کەرتی خانووبەرە و وەبەرهێنان لە هۆڵەندا، کە گەشەپێدەرانی پڕۆژەکان، وەبەرهێنەران و تەلارسازان لە ناوەندی RAI Amsterdam کۆدەکاتەوە.",
+    overview_en: "The largest annual real estate trade fair in the Netherlands, bringing together property developers, investors, architects, and urban planners at RAI Amsterdam.",
+    audience_ku: [
+      "وەبەرهێنەران و کۆمپانیاکانی گەشەپێدانی خانووبەرە و نیشتەجێبوون.",
+      "بەڕێوەبەرانی پڕۆژە گەورەکانی کۆمەڵگەی نیشتەجێبوون و بازرگانی.",
+      "تەلارسازان، ئەندازیارانی پلاندانانی شار و ڕاوێژکارانی خانووبەرە.",
+      "کۆمپانیاکانی بەڕێوەبردنی موڵک، بیناسازیی بەردەوام و دارایی."
+    ],
+    audience_en: [
+      "Real Estate Developers and Property Investors.",
+      "Residential and Commercial Complex Project Directors.",
+      "Architects, Urban Planners, and Real Estate Consultants.",
+      "Asset Management, Sustainable Construction, and Finance Firms."
+    ],
+    foresight_title_ku: "سەرپەرشتیی فۆرسایت بۆ ڤیزای هۆڵەندا",
+    foresight_title_en: "Foresight Supervision for Netherlands Visa",
+    foresight_ku: "فۆرسایت هەموو هەنگاوەکانی تۆمارکردن لە پێشانگای PROVADA، وەرگرتنی بانگهێشتنامەی فەرمی لە ئەمستەردام و ڕێکخستنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگن ئەنجام دەدات.",
+    foresight_en: "Foresight completes all PROVADA registration steps, official invitation retrieval in Amsterdam, and full Schengen visa file organization."
   }
 ];
 
@@ -1570,7 +1654,7 @@ if (!fs.existsSync('data')) {
 }
 
 const fileContent = `// ============================================================================
-// FORESIGHT CONFERENCES & EXHIBITIONS DATABASE (37 OFFICIAL PDF EVENTS)
+// FORESIGHT CONFERENCES & EXHIBITIONS DATABASE (39 OFFICIAL EVENTS)
 // Update this file anytime to add, edit, or update conferences weekly.
 // ============================================================================
 var FORESIGHT_EVENTS = ${JSON.stringify(events, null, 2)};
