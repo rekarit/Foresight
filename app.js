@@ -59,7 +59,7 @@
       audienceHeading: "تایبەتە بە کێ؟",
       detailsBtn: "وردەکارییەکان",
       officialSiteBtn: "ماڵپەڕی فەرمی",
-      ticketLinkBtn: "زانیاری / تۆمارکردن",
+      ticketLinkBtn: "تکت / تۆمارکردن",
       shareBtn: "کۆپیکردنی بەستەر",
       copiedNotice: "بەستەری کۆنفرانسەکە کۆپی کرا",
       tableColPage: "#",
@@ -111,7 +111,7 @@
       audienceHeading: "Who Should Attend?",
       detailsBtn: "Details",
       officialSiteBtn: "Official Site",
-      ticketLinkBtn: "Info / Registration",
+      ticketLinkBtn: "Tickets / Register",
       shareBtn: "Copy Link",
       copiedNotice: "Event link copied",
       tableColPage: "#",
@@ -332,19 +332,24 @@
       });
     }
 
-    if (sortBy === 'pdf-order') {
-      list.sort((a, b) => (a.pdfPage || 999) - (b.pdfPage || 999));
-    } else if (sortBy === 'date-asc') {
-      list.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    } else if (sortBy === 'date-desc') {
-      list.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-    } else if (sortBy === 'title') {
-      list.sort((a, b) => {
+    list.sort((a, b) => {
+      if (activeTab !== 'expired') {
+        const expDiff = (getEventStatus(a).isExpired ? 1 : 0) - (getEventStatus(b).isExpired ? 1 : 0);
+        if (expDiff !== 0) return expDiff;
+      }
+      if (sortBy === 'pdf-order') {
+        return (a.pdfPage || 999) - (b.pdfPage || 999);
+      } else if (sortBy === 'date-asc') {
+        return new Date(a.startDate) - new Date(b.startDate);
+      } else if (sortBy === 'date-desc') {
+        return new Date(b.startDate) - new Date(a.startDate);
+      } else if (sortBy === 'title') {
         const tA = currentLang === 'ku' ? a.title_ku : a.title_en;
         const tB = currentLang === 'ku' ? b.title_ku : b.title_en;
         return tA.localeCompare(tB);
-      });
-    }
+      }
+      return 0;
+    });
 
     updateActiveFilterIndicator();
 

@@ -1,5 +1,5 @@
 // ============================================================================
-// FORESIGHT CONFERENCES & EXHIBITIONS DATABASE (39 OFFICIAL EVENTS)
+// FORESIGHT CONFERENCES & EXHIBITIONS DATABASE (40 OFFICIAL EVENTS)
 // Update this file anytime to add, edit, or update conferences weekly.
 // ============================================================================
 var FORESIGHT_EVENTS = [
@@ -362,6 +362,7 @@ var FORESIGHT_EVENTS = [
     "dateText_ku": "16–20 March 2027",
     "dateText_en": "16–20 March 2027",
     "officialUrl": "https://www.english.ids-cologne.de/",
+    "ticketUrl": "https://www.english.ids-cologne.de/trade-fair/tickets/buy-tickets/",
     "overview_ku": "گەورەترین و بەناوبانگترین پێشانگای پیشەسازیی پزیشکیی ددان لەسەر ئاستی جیهان، کە هەر دوو ساڵ جارێک لە شاری کۆڵنی ئەڵمانیا بەڕێوەدەچێت.",
     "overview_en": "The largest and most renowned global dental trade show, held every two years in Cologne, Germany.",
     "audience_ku": [
@@ -1641,6 +1642,58 @@ var FORESIGHT_EVENTS = [
     "foresight_title_en": "Foresight Supervision for Netherlands Visa",
     "foresight_ku": "فۆرسایت هەموو هەنگاوەکانی تۆمارکردن لە پێشانگای PROVADA، وەرگرتنی بانگهێشتنامەی فەرمی لە ئەمستەردام و ڕێکخستنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگن ئەنجام دەدات.",
     "foresight_en": "Foresight completes all PROVADA registration steps, official invitation retrieval in Amsterdam, and full Schengen visa file organization."
+  },
+  {
+    "id": "gitex-italy-2027",
+    "pdfPage": null,
+    "image": "assets/images/event_gitex_italy_2027.jpg",
+    "flagImg": "assets/flags/it.svg",
+    "countryCode": "it",
+    "title_ku": "کۆنفرانس و پێشانگای جیهانیی تەکنەلۆژیا (GITEX Italy 2027)",
+    "title_en": "GITEX AI Mediterranean Italy 2027",
+    "headline_ku": "ڤیزای شنگن بە بانگهێشتنامەی پێشانگای نێودەوڵەتیی GITEX لە ئیتاڵیا",
+    "headline_en": "Schengen Visa with Official GITEX Italy Tech Exhibition Invitation",
+    "category": "non-medical",
+    "field_ku": "تەکنەلۆژیای زانیاری (IT)، ژیریی دەستکرد (AI)، ئاسایشی سایبەری، تەلەپەیوەندی و برۆدکاست",
+    "field_en": "Information Technology, AI, Cybersecurity, Telecom & Startups",
+    "city_ku": "ڕۆما",
+    "city_en": "Rome",
+    "country_ku": "ئیتاڵیا",
+    "country_en": "Italy",
+    "venue": "Roma Convention Center La Nuvola, Rome",
+    "startDate": "2027-04-21",
+    "endDate": "2027-04-22",
+    "dateText_ku": "21–22 April 2027",
+    "dateText_en": "21–22 April 2027",
+    "officialUrl": "https://www.gitexitaly.com/",
+    "overview_ku": "بەشێک لە زنجیرە پێشانگا جیهانییەکانی GITEX بۆ کەرتی تەکنەلۆژیای زانیاری، ژیریی دەستکرد، ئاسایشی سایبەری، تەلەپەیوەندی، پەخشی دیجیتاڵی و کۆمپانیا نوێیەکان لە پایتەختی ئیتاڵیا، شاری ڕۆما.",
+    "overview_en": "Part of the global GITEX exhibition series in Europe's Mediterranean hub, uniting IT leaders, AI and cybersecurity innovators, telecom operators, startups, and investors in Rome, Italy.",
+    "audience_ku": [
+      "خاوەن کۆمپانیاکانی تەکنەلۆژیای زانیاری (IT) و تەکنەلۆژیا.",
+      "پسپۆڕان و کارمەندانی بواری پەیوەندییەکان (Telecom) و پەخش و برۆدکاست.",
+      "دابینکەرانی خزمەتگوزارییەکانی IPTV و OTT.",
+      "گەشەپێدەرانی نەرمەواڵا (Software Developers) و پسپۆڕانی IT.",
+      "بازرگانانی کۆمپیوتەر، ئەلیکترۆنیات و ئامێرە تەکنەلۆژییەکان.",
+      "پسپۆڕانی ژیریی دەستکرد (AI) و ئاسایشی سایبەری (Cybersecurity).",
+      "ئەندازیارانی تۆڕ (Network Engineers) و دابینکەرانی خزمەتگوزاریی ئینتەرنێت (ISP).",
+      "دامەزرێنەرانی ستارتئەپ، خاوەنکاران و وەبەرهێنەرانی بواری تەکنەلۆژیا.",
+      "هاوردەکاران، دابینکەران و دابەشکەرانی بەرهەمە تەکنەلۆژییەکان."
+    ],
+    "audience_en": [
+      "IT and technology company owners.",
+      "Telecommunications and broadcasting professionals.",
+      "IPTV and OTT service providers.",
+      "Software developers and IT specialists.",
+      "Computer and electronics traders.",
+      "AI and cybersecurity professionals.",
+      "Network engineers and internet service providers.",
+      "Startup founders, entrepreneurs and investors.",
+      "Technology importers, suppliers and distributors."
+    ],
+    "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای شنگنی ئیتاڵیا",
+    "foresight_title_en": "Foresight Support for Italian Schengen Visa",
+    "foresight_ku": "تیمی فۆرسایت هەموو هەنگاوەکانی تۆمارکردنی فەرمی لە پێشانگای GITEX Italy، دابینکردنی تکت و نامەی بانگهێشتنامە و ڕێکخستنی تەواوی فایلەکەت بۆ ڤیزای شنگنی ئیتاڵیا ئەنجام دەدات.",
+    "foresight_en": "Foresight handles official GITEX Italy registration, pass and invitation arrangements, and complete Italian Schengen visa dossier preparation."
   }
 ];
 
