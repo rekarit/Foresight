@@ -11,12 +11,26 @@
   let currentLang = localStorage.getItem('foresight_lang') || 'ku';
   let currentTheme = localStorage.getItem('foresight_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   let activeTab = 'all';
+  let postFilter = 'all'; // 'all' | 'posted' | 'unposted'
   let selectedCountry = 'all';
   let selectedMonthYear = 'all';
   let sortBy = 'pdf-order';
   let viewMode = 'cards'; // 'cards' | 'table'
   let searchQuery = '';
   let activeModalEventId = null;
+
+  const OVERRIDES_KEY = 'foresight_posted_overrides_v1';
+  const ADMIN_SESSION_KEY = 'foresight_post_admin_unlocked';
+  const PIN_B64 = 'NjY1MA==';
+  let isAdminUnlocked = false;
+  try {
+    isAdminUnlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+  } catch (err) {
+    isAdminUnlocked = false;
+  }
+  let postedOverrides = loadPostedOverrides();
+  let pendingPinAction = null;
+  let draggedEventId = null;
 
   const i18n = {
     ku: {
@@ -68,6 +82,28 @@
       tableColDate: "بەروار",
       tableColStatus: "دۆخ",
       tableColLinks: "بەستەر",
+      tableColPosted: "پۆست",
+      postFilterAll: "گشت پۆستەکان",
+      postFilterPosted: "پۆستکراو",
+      postFilterUnposted: "پۆستنەکراو",
+      statusPosted: "پۆستکراو",
+      statusUnposted: "پۆستنەکراو",
+      postLockedHint: "قوفڵە (PIN بۆ گۆڕین)",
+      postUnlockedHint: "کراوەیە — کلیک بکە یان کارت ڕابکێشە",
+      postUnlockBtn: "کردنەوەی دەستکاری",
+      postLockBtn: "قوفڵکردنەوە",
+      dropPostedZone: "ڕایبکێشە ئێرە: پۆستکراو",
+      dropUnpostedZone: "ڕایبکێشە ئێرە: پۆستنەکراو",
+      dragHandleHint: "دراگ بکە",
+      pinTitle: "پشتڕاستکردنەوەی ئاسایش",
+      pinDesc: "بۆ گۆڕینی دۆخی پۆستکراو یان پۆستنەکراو، تکایە کۆدی PIN بنووسە:",
+      pinWrong: "کۆدی PIN هەڵەیە! تکایە دووبارە هەوڵبدەرەوە.",
+      pinCancel: "پاشگەزبوونەوە",
+      pinConfirm: "پشتڕاستکردنەوە",
+      unlockedToast: "دۆخی بەڕێوەبردن کرایەوە",
+      lockedToast: "دۆخی بەڕێوەبردن قوفڵ کرا",
+      markedPostedToast: "کۆنفرانسەکە خرایە لیستی پۆستکراوەکان",
+      markedUnpostedToast: "کۆنفرانسەکە کرایەوە بە پۆستنەکراو",
       emptyTitle: "هیچ کۆنفرانسێک نەدۆزرایەوە",
       emptyDesc: "تکایە وشەی گەڕانەکەت بگۆڕە یان فلتەرەکان لابدە."
     },
@@ -120,6 +156,28 @@
       tableColDate: "Date",
       tableColStatus: "Status",
       tableColLinks: "Links",
+      tableColPosted: "Post Status",
+      postFilterAll: "All Posts",
+      postFilterPosted: "Posted",
+      postFilterUnposted: "Not Posted",
+      statusPosted: "Posted",
+      statusUnposted: "Not Posted",
+      postLockedHint: "Locked (PIN required to edit)",
+      postUnlockedHint: "Unlocked — Click switch or drag cards",
+      postUnlockBtn: "Unlock Edit",
+      postLockBtn: "Lock",
+      dropPostedZone: "Drop here: Posted",
+      dropUnpostedZone: "Drop here: Not Posted",
+      dragHandleHint: "Drag",
+      pinTitle: "Security Verification",
+      pinDesc: "Please enter the PIN code to change Posted / Not Posted status:",
+      pinWrong: "Incorrect PIN! Please try again.",
+      pinCancel: "Cancel",
+      pinConfirm: "Verify",
+      unlockedToast: "Edit mode unlocked",
+      lockedToast: "Edit mode locked",
+      markedPostedToast: "Marked as Posted",
+      markedUnpostedToast: "Marked as Not Posted",
       emptyTitle: "No Matching Conferences Found",
       emptyDesc: "Try adjusting your search or resetting the filters."
     }
@@ -150,10 +208,76 @@
     return lang === 'ku' ? `${monthNamesKu[mNum - 1]} ${year}` : `${monthNamesEn[mNum - 1]} ${year}`;
   }
 
+  function loadPostedOverrides() {
+    try {
+      const raw = localStorage.getItem(OVERRIDES_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function savePostedOverrides() {
+    try {
+      localStorage.setItem(OVERRIDES_KEY, JSON.stringify(postedOverrides));
+    } catch (err) {
+      // ignore storage quota errors
+    }
+  }
+
+  function isEventPosted(event) {
+    if (!event) return false;
+    if (Object.prototype.hasOwnProperty.call(postedOverrides, event.id)) {
+      return Boolean(postedOverrides[event.id]);
+    }
+    return Boolean(event.posted);
+  }
+
+  function setEventPosted(id, newVal) {
+    const events = getEvents();
+    const target = events.find(ev => ev.id === id);
+    if (!target) return;
+    postedOverrides[id] = Boolean(newVal);
+    savePostedOverrides();
+    renderStatistics();
+    applyFiltersAndRender();
+    if (activeModalEventId === id) {
+      openModal(id);
+    }
+    const t = i18n[currentLang];
+    showToast(newVal ? t.markedPostedToast : t.markedUnpostedToast);
+  }
+
+  function renderPostToggleHtml(event) {
+    const t = i18n[currentLang];
+    const posted = isEventPosted(event);
+    const label = posted ? t.statusPosted : t.statusUnposted;
+    return `
+      <button type="button" class="post-toggle-switch ${posted ? 'is-posted' : 'is-unposted'}" data-toggle-post-id="${event.id}" aria-pressed="${posted}">
+        <span class="switch-track"><span class="switch-knob"></span></span>
+        <span>${label}</span>
+      </button>
+    `;
+  }
+
   const elements = {
     themeBtn: document.getElementById('themeToggleBtn'),
     langBtn: document.getElementById('langToggleBtn'),
     langText: document.getElementById('langText'),
+    postAdminBtn: document.getElementById('postAdminBtn'),
+    postFilterGroup: document.getElementById('postFilterGroup'),
+    postLockBadge: document.getElementById('postLockBadge'),
+    postUnlockTrigger: document.getElementById('postUnlockTrigger'),
+    dragDropDock: document.getElementById('dragDropDock'),
+    pinModalOverlay: document.getElementById('pinModalOverlay'),
+    pinDialog: document.getElementById('pinDialog'),
+    pinForm: document.getElementById('pinForm'),
+    pinInput: document.getElementById('pinInput'),
+    pinError: document.getElementById('pinError'),
+    pinCloseBtn: document.getElementById('pinCloseBtn'),
+    pinCancelBtn: document.getElementById('pinCancelBtn'),
     searchInput: document.getElementById('searchInput'),
     filterToggleBtn: document.getElementById('filterToggleBtn'),
     advancedFiltersRow: document.getElementById('advancedFiltersRow'),
@@ -175,9 +299,71 @@
     backToTop: document.getElementById('backToTopBtn')
   };
 
+  function updateAdminUi() {
+    const t = i18n[currentLang];
+    if (elements.postAdminBtn) {
+      elements.postAdminBtn.classList.toggle('is-unlocked', isAdminUnlocked);
+    }
+    if (elements.postLockBadge) {
+      elements.postLockBadge.textContent = isAdminUnlocked ? t.postUnlockedHint : t.postLockedHint;
+      elements.postLockBadge.classList.toggle('is-unlocked', isAdminUnlocked);
+    }
+    if (elements.postUnlockTrigger) {
+      elements.postUnlockTrigger.textContent = isAdminUnlocked ? t.postLockBtn : t.postUnlockBtn;
+      elements.postUnlockTrigger.classList.toggle('is-unlocked', isAdminUnlocked);
+    }
+  }
+
+  function openPinModal(action) {
+    pendingPinAction = action || null;
+    if (!elements.pinModalOverlay) return;
+    if (elements.pinError) elements.pinError.style.display = 'none';
+    if (elements.pinInput) elements.pinInput.value = '';
+    elements.pinModalOverlay.classList.add('active');
+    setTimeout(() => {
+      if (elements.pinInput) elements.pinInput.focus();
+    }, 60);
+  }
+
+  function closePinModal() {
+    if (!elements.pinModalOverlay) return;
+    elements.pinModalOverlay.classList.remove('active');
+    pendingPinAction = null;
+  }
+
+  function executePinAction(action) {
+    if (!action) return;
+    if (action.type === 'set-posted') {
+      setEventPosted(action.id, action.value);
+    } else if (action.type === 'toggle-posted') {
+      const ev = getEvents().find(item => item.id === action.id);
+      if (ev) setEventPosted(action.id, !isEventPosted(ev));
+    }
+  }
+
+  function requireUnlockFor(action) {
+    if (isAdminUnlocked) {
+      executePinAction(action);
+      return;
+    }
+    openPinModal(action);
+  }
+
+  function lockAdminMode() {
+    isAdminUnlocked = false;
+    try {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    } catch (err) {
+      // ignore
+    }
+    updateAdminUi();
+    showToast(i18n[currentLang].lockedToast);
+  }
+
   function init() {
     setTheme(currentTheme);
     setLanguage(currentLang, false);
+    updateAdminUi();
     populateFilterDropdowns();
     renderStatistics();
     bindEvents();
@@ -213,6 +399,7 @@
     }
 
     if (rerender) {
+      updateAdminUi();
       populateFilterDropdowns();
       applyFiltersAndRender();
       if (activeModalEventId) openModal(activeModalEventId);
@@ -272,6 +459,8 @@
     const countries = new Set(events.map(e => e.country_en)).size;
     const upcoming = events.filter(e => !getEventStatus(e).isExpired).length;
     const expired = events.filter(e => getEventStatus(e).isExpired).length;
+    const postedTotal = events.filter(e => isEventPosted(e)).length;
+    const unpostedTotal = total - postedTotal;
 
     const setEl = (id, val) => {
       const el = document.getElementById(id);
@@ -288,11 +477,15 @@
     setEl('badgeCountTech', tech);
     setEl('badgeCountActive', upcoming);
     setEl('badgeCountExpired', expired);
+
+    setEl('badgePostAll', total);
+    setEl('badgePostPosted', postedTotal);
+    setEl('badgePostUnposted', unpostedTotal);
   }
 
   function updateActiveFilterIndicator() {
     if (!elements.activeFilterDot) return;
-    const hasFilter = selectedCountry !== 'all' || selectedMonthYear !== 'all' || sortBy !== 'pdf-order';
+    const hasFilter = selectedCountry !== 'all' || selectedMonthYear !== 'all' || sortBy !== 'pdf-order' || postFilter !== 'all';
     elements.activeFilterDot.style.display = hasFilter ? 'block' : 'none';
   }
 
@@ -308,6 +501,12 @@
       list = list.filter(e => !getEventStatus(e).isExpired);
     } else if (activeTab === 'expired') {
       list = list.filter(e => getEventStatus(e).isExpired);
+    }
+
+    if (postFilter === 'posted') {
+      list = list.filter(e => isEventPosted(e));
+    } else if (postFilter === 'unposted') {
+      list = list.filter(e => !isEventPosted(e));
     }
 
     if (selectedCountry !== 'all') {
@@ -393,6 +592,30 @@
       const card = document.createElement('article');
       card.className = `event-card ${isExpired ? 'is-expired' : ''}`;
       card.id = `card-${e.id}`;
+      card.setAttribute('draggable', 'true');
+      card.dataset.eventId = e.id;
+
+      card.addEventListener('dragstart', (ev) => {
+        draggedEventId = e.id;
+        card.classList.add('is-dragging');
+        if (ev.dataTransfer) {
+          ev.dataTransfer.effectAllowed = 'move';
+          ev.dataTransfer.setData('text/plain', e.id);
+        }
+        if (elements.dragDropDock) {
+          elements.dragDropDock.classList.add('visible');
+          elements.dragDropDock.setAttribute('aria-hidden', 'false');
+        }
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('is-dragging');
+        if (elements.dragDropDock) {
+          elements.dragDropDock.classList.remove('visible');
+          elements.dragDropDock.setAttribute('aria-hidden', 'true');
+        }
+        document.querySelectorAll('.drop-target.drag-over').forEach(el => el.classList.remove('drag-over'));
+      });
 
       card.innerHTML = `
         <div class="card-media open-modal-trigger" data-id="${e.id}">
@@ -421,6 +644,11 @@
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
             <span>${e.venue}</span>
+          </div>
+
+          <div class="card-post-row">
+            ${renderPostToggleHtml(e)}
+            <span class="card-drag-tag" title="${t.dragHandleHint}">⋮⋮ ${t.dragHandleHint}</span>
           </div>
 
           <div class="card-footer">
@@ -468,6 +696,7 @@
           </td>
           <td dir="ltr" style="font-weight: 600;">${e.dateText_en}</td>
           <td>${statusHtml}</td>
+          <td>${renderPostToggleHtml(e)}</td>
           <td>
             <div style="display:flex; gap:0.4rem;">
               <a href="${e.officialUrl}" target="_blank" rel="noopener noreferrer" class="table-link-btn">
@@ -491,6 +720,7 @@
             <th>${t.tableColLocation}</th>
             <th>${t.tableColDate}</th>
             <th>${t.tableColStatus}</th>
+            <th>${t.tableColPosted}</th>
             <th>${t.tableColLinks}</th>
           </tr>
         </thead>
@@ -525,8 +755,10 @@
 
     elements.modalContent.innerHTML = `
       <div class="modal-header">
-        <div class="modal-header-tag">
-          ${country} — ${city} · <span class="table-status-badge ${isExpired ? 'expired' : 'active'}">${statusLabel}</span>
+        <div class="modal-header-tag" style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+          <span>${country} — ${city} ·</span>
+          <span class="table-status-badge ${isExpired ? 'expired' : 'active'}">${statusLabel}</span>
+          ${renderPostToggleHtml(e)}
         </div>
         <button class="modal-close-btn" id="modalCloseBtnInner" aria-label="Close">✕</button>
       </div>
@@ -680,6 +912,104 @@
       });
     }
 
+    if (elements.postFilterGroup) {
+      elements.postFilterGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.post-seg-btn');
+        if (!btn) return;
+        document.querySelectorAll('.post-seg-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        postFilter = btn.getAttribute('data-post-filter') || 'all';
+        applyFiltersAndRender();
+      });
+    }
+
+    const handleAdminToggleClick = () => {
+      if (isAdminUnlocked) {
+        lockAdminMode();
+      } else {
+        openPinModal(null);
+      }
+    };
+    if (elements.postAdminBtn) elements.postAdminBtn.addEventListener('click', handleAdminToggleClick);
+    if (elements.postUnlockTrigger) elements.postUnlockTrigger.addEventListener('click', handleAdminToggleClick);
+
+    if (elements.pinForm) {
+      elements.pinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const entered = (elements.pinInput ? elements.pinInput.value : '').trim();
+        let encoded = '';
+        try {
+          encoded = btoa(entered);
+        } catch (err) {
+          encoded = '';
+        }
+        if (encoded === PIN_B64) {
+          const actionToRun = pendingPinAction;
+          isAdminUnlocked = true;
+          try {
+            sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+          } catch (err) {
+            // ignore
+          }
+          updateAdminUi();
+          closePinModal();
+          if (actionToRun) {
+            executePinAction(actionToRun);
+          } else {
+            showToast(i18n[currentLang].unlockedToast);
+          }
+        } else {
+          if (elements.pinError) elements.pinError.style.display = 'block';
+          if (elements.pinDialog) {
+            elements.pinDialog.classList.remove('shake');
+            void elements.pinDialog.offsetWidth;
+            elements.pinDialog.classList.add('shake');
+          }
+          if (elements.pinInput) {
+            elements.pinInput.focus();
+            elements.pinInput.select();
+          }
+        }
+      });
+    }
+
+    if (elements.pinCloseBtn) elements.pinCloseBtn.addEventListener('click', closePinModal);
+    if (elements.pinCancelBtn) elements.pinCancelBtn.addEventListener('click', closePinModal);
+    if (elements.pinModalOverlay) {
+      elements.pinModalOverlay.addEventListener('click', (e) => {
+        if (e.target === elements.pinModalOverlay) closePinModal();
+      });
+    }
+
+    document.querySelectorAll('.drop-target[data-drop-posted]').forEach(zone => {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('drag-over');
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        if (elements.dragDropDock) {
+          elements.dragDropDock.classList.remove('visible');
+          elements.dragDropDock.setAttribute('aria-hidden', 'true');
+        }
+        const transferredId = e.dataTransfer ? e.dataTransfer.getData('text/plain') : '';
+        const dropId = transferredId || draggedEventId;
+        draggedEventId = null;
+        if (!dropId) return;
+        const targetPosted = zone.getAttribute('data-drop-posted') === 'true';
+        requireUnlockFor({ type: 'set-posted', id: dropId, value: targetPosted });
+      });
+    });
+
     if (elements.countrySelect) {
       elements.countrySelect.addEventListener('change', (e) => {
         selectedCountry = e.target.value;
@@ -704,6 +1034,7 @@
     if (elements.resetBtn) {
       elements.resetBtn.addEventListener('click', () => {
         activeTab = 'all';
+        postFilter = 'all';
         selectedCountry = 'all';
         selectedMonthYear = 'all';
         sortBy = 'pdf-order';
@@ -715,11 +1046,22 @@
         document.querySelectorAll('.pill-btn').forEach(b => {
           b.classList.toggle('active', b.getAttribute('data-tab') === 'all');
         });
+        document.querySelectorAll('.post-seg-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-post-filter') === 'all');
+        });
         applyFiltersAndRender();
       });
     }
 
     document.addEventListener('click', (e) => {
+      const postToggle = e.target.closest('.post-toggle-switch[data-toggle-post-id]');
+      if (postToggle) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = postToggle.getAttribute('data-toggle-post-id');
+        if (id) requireUnlockFor({ type: 'toggle-posted', id });
+        return;
+      }
       const trigger = e.target.closest('.open-modal-trigger[data-id]');
       if (trigger) {
         openModal(trigger.getAttribute('data-id'));
@@ -733,8 +1075,12 @@
     }
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && elements.modalOverlay.classList.contains('active')) {
-        closeModal();
+      if (e.key === 'Escape') {
+        if (elements.pinModalOverlay && elements.pinModalOverlay.classList.contains('active')) {
+          closePinModal();
+        } else if (elements.modalOverlay.classList.contains('active')) {
+          closeModal();
+        }
       }
     });
 

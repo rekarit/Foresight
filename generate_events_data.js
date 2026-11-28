@@ -1706,8 +1706,19 @@ if (!fs.existsSync('data')) {
   fs.mkdirSync('data');
 }
 
+const DEFAULT_POSTED_IDS = new Set([
+  "diplomats-forum-2027",
+  "igb-barcelona-2027",
+  "imcas-world-2027"
+]);
+
+events.forEach(ev => {
+  ev.posted = DEFAULT_POSTED_IDS.has(ev.id);
+});
+
 const medCount = events.filter(e => e.category === 'medical').length;
 const nonMedCount = events.filter(e => e.category !== 'medical').length;
+const postedCount = events.filter(e => e.posted).length;
 
 const fileContent = `// ============================================================================
 // FORESIGHT CONFERENCES & EXHIBITIONS DATABASE (${events.length} OFFICIAL EVENTS)
@@ -1725,4 +1736,4 @@ if (typeof module !== "undefined" && module.exports) {
 `;
 
 fs.writeFileSync('data/events.js', fileContent, 'utf8');
-console.log(`Successfully generated data/events.js with ${events.length} events (${medCount} Medical + ${nonMedCount} Non-Medical)!`);
+console.log(`Successfully generated data/events.js with ${events.length} events (${medCount} Medical + ${nonMedCount} Non-Medical, ${postedCount} Posted by default)!`);

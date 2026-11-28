@@ -43,7 +43,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ کۆنگرەی پزیشکیی ئیتاڵیا",
     "foresight_title_en": "Foresight Supervision for the Italian Medical Congress",
     "foresight_ku": "بانگهێشتنامەی فەرمیی کۆمەڵەی ئەوروپیی دڵ بەهێزترین پشتگیری دەدات بە دۆسیەکەت لە باڵیۆزخانەی ئیتاڵیا. فۆرسایت تەواوی ڕێکارەکانی تۆمارکردن، وەرگرتنی بانگهێشتنامە و ڕێکخستنی فایلی ڤیزای شنگنت بۆ جێبەجێ دەکات.",
-    "foresight_en": "The official ESC invitation letter provides strong support at the Italian Embassy. Foresight handles all registration steps, invitation retrieval, and Schengen visa file preparation."
+    "foresight_en": "The official ESC invitation letter provides strong support at the Italian Embassy. Foresight handles all registration steps, invitation retrieval, and Schengen visa file preparation.",
+    "posted": false
   },
   {
     "id": "dutch-endoscopy-2026",
@@ -85,7 +86,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ئامادەکردنی دۆسیەی ڤیزای هۆڵەندا لەگەڵ فۆرسایت",
     "foresight_title_en": "Preparing Your Netherlands Visa Dossier with Foresight",
     "foresight_ku": "فۆرسایت پەیوەندیی ڕاستەوخۆ و تۆمارکردنی فەرمی بۆ ئەم کۆنفرانسە ڕێکدەخات و بانگهێشتنامەی کەسیی بەشداریکردن دەردەهێنێت، لەگەڵ سەرپەرشتیی تەواوی مامەڵەی ڤیزای شنگن.",
-    "foresight_en": "Foresight arranges direct contact, official registration, personalized invitation letter extraction, and full Schengen visa supervision."
+    "foresight_en": "Foresight arranges direct contact, official registration, personalized invitation letter extraction, and full Schengen visa supervision.",
+    "posted": false
   },
   {
     "id": "esmo-io-2026",
@@ -127,7 +129,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ وەرگرتنی ڤیزای بەریتانیا",
     "foresight_title_en": "Foresight Support for Obtaining a UK Visa",
     "foresight_ku": "تیمی فۆرسایت تەواوی هەنگاوەکانی تۆمارکردن لە پۆرتاڵی فەرمیی ESMO، دەرهێنانی نامەی بانگهێشتنامەی فەرمی و ئامادەکردنی تەواوی دۆسیەی ڤیزای بەریتانیا (UK Visa) لە ئەستۆ دەگرێت.",
-    "foresight_en": "Foresight handles all registration steps on the official ESMO portal, official invitation letter extraction, and complete UK Visa file preparation."
+    "foresight_en": "Foresight handles all registration steps on the official ESMO portal, official invitation letter extraction, and complete UK Visa file preparation.",
+    "posted": false
   },
   {
     "id": "imcas-world-2027",
@@ -169,7 +172,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ کۆنگرەی پاریس",
     "foresight_title_en": "Foresight Supervision for the Paris Congress",
     "foresight_ku": "کۆنگرەی IMCAS بە یەکێک لە متمانەپێکراوترین بۆنە پزیشکییەکان دادەنرێت لە باڵیۆزخانەی فەڕەنسا؛ فۆرسایت لە تۆمارکردنەوە تا وەرگرتنی ڤیزای شنگن لەگەڵت دەبێت.",
-    "foresight_en": "IMCAS Congress is recognized as one of the most trusted medical events at the French Embassy; Foresight accompanies you from registration to obtaining your Schengen visa."
+    "foresight_en": "IMCAS Congress is recognized as one of the most trusted medical events at the French Embassy; Foresight accompanies you from registration to obtaining your Schengen visa.",
+    "posted": true
   },
   {
     "id": "yankee-dental-2027",
@@ -211,7 +215,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئەمریکا",
     "foresight_title_en": "Foresight Support for USA Visa",
     "foresight_ku": "تیمی فۆرسایت تەواوی کارەکانی تۆمارکردن، وەرگرتنی بانگهێشتنامەی فەرمی لە ئەمریکا، پڕکردنەوەی فۆرمەکان و ئامادەکردنی دۆسیەی ڤیزای ئەمریکا (USA Visa) ئەنجام دەدات.",
-    "foresight_en": "Foresight completes all registration steps, official US invitation retrieval, form filling, and USA Visa dossier preparation."
+    "foresight_en": "Foresight completes all registration steps, official US invitation retrieval, form filling, and USA Visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "ecr-2027",
@@ -253,7 +258,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای شنگنی نەمسا",
     "foresight_title_en": "Foresight Supervision for Austrian Schengen Visa",
     "foresight_ku": "بانگهێشتنامەی فەرمیی myESR یەکێکە لە باوەڕپێکراوترین بەڵگەنامەکان بۆ باڵیۆزخانەی نەمسا؛ فۆرسایت تەواوی پڕۆسەی ناونووسین و مامەڵەی ڤیزاکەت بۆ بەڕێوەدەبات.",
-    "foresight_en": "The official myESR invitation letter is among the most trusted documents for the Austrian Embassy; Foresight manages the entire registration and visa process."
+    "foresight_en": "The official myESR invitation letter is among the most trusted documents for the Austrian Embassy; Foresight manages the entire registration and visa process.",
+    "posted": false
   },
   {
     "id": "tht-2027",
@@ -295,7 +301,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ کۆنفرانسی پزیشکیی پۆڵەندا",
     "foresight_title_en": "Foresight Support for the Polish Medical Conference",
     "foresight_ku": "ئەم کۆنفرانسە ڕاستەوخۆ دوای تۆمارکردن نامەی ڤیزای فەرمی دەدات؛ تیمی فۆرسایت سەرجەم ڕێکارەکانی تۆمارکردن و ڕێکخستنی دۆسیەی ڤیزای شنگن بۆت جێبەجێ دەکات.",
-    "foresight_en": "This conference directly provides an official visa letter after registration; Foresight handles all registration procedures and Schengen visa dossier organization."
+    "foresight_en": "This conference directly provides an official visa letter after registration; Foresight handles all registration procedures and Schengen visa dossier organization.",
+    "posted": false
   },
   {
     "id": "bdia-dental-2027",
@@ -337,7 +344,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە ڤیزای بەریتانیا بۆ پزیشکانی ددان",
     "foresight_title_en": "Foresight's Role in UK Visas for Dental Professionals",
     "foresight_ku": "فۆرسایت هەنگاوەکانی تۆمارکردن، وەرگرتنی بانگهێشتنامەی فەرمیی پێشانگاکە لە لەندەن و ئامادەکردنی تەواوی فایل و بەڵگەنامەکانی ڤیزای بەریتانیا بۆت ئەنجام دەدات.",
-    "foresight_en": "Foresight performs registration, official London exhibition invitation retrieval, and full UK visa file preparation."
+    "foresight_en": "Foresight performs registration, official London exhibition invitation retrieval, and full UK visa file preparation.",
+    "posted": false
   },
   {
     "id": "ids-cologne-2027",
@@ -380,7 +388,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای شنگنی ئەڵمانیا",
     "foresight_title_en": "Foresight Support for German Schengen Visa",
     "foresight_ku": "پێشانگای IDS نامەی ڤیزای فەرمی دابین دەکات؛ فۆرسایت تەواوی ڕێکارەکانی وەرگرتنی بلیت و بانگهێشتنامەی فەرمی و ئامادەکردنی دۆسیەی ڤیزای ئەڵمانیا بەڕێوەدەبات.",
-    "foresight_en": "IDS issues an official visa letter; Foresight manages ticket acquisition, official invitation letter retrieval, and German Schengen visa dossier preparation."
+    "foresight_en": "IDS issues an official visa letter; Foresight manages ticket acquisition, official invitation letter retrieval, and German Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "limsc-2027",
@@ -423,7 +432,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "هاوکاریی فۆرسایت بۆ ڤیزای کۆنفرانسی لایدن",
     "foresight_title_en": "Foresight Assistance for Leiden Conference Visa",
     "foresight_ku": "فۆرسایت لە تۆمارکردنی فەرمی لە کۆنفرانسەکەی زانکۆی لایدنەوە تا دەرهێنانی بانگهێشتنامەی فەرمی و ئامادەکردنی دۆسیەی ڤیزای شنگنی هۆڵەندا لەگەڵت دەبێت.",
-    "foresight_en": "Foresight supports you from official LUMC conference registration through invitation letter extraction and Netherlands Schengen visa dossier preparation."
+    "foresight_en": "Foresight supports you from official LUMC conference registration through invitation letter extraction and Netherlands Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "dental-medicine-ortho-2027",
@@ -465,7 +475,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای کۆنگرەی ددان لە هۆڵەندا",
     "foresight_title_en": "Foresight Support for Dental Congress Visa in the Netherlands",
     "foresight_ku": "تیمی فۆرسایت لە تۆمارکردنی فەرمی و دابینکردنی نامەی بانگهێشتنامەی کۆنگرەکەوە تا ڕێکخستنی سەرجەم بەڵگەنامەکانی ڤیزای شنگن یاوەریت دەکات.",
-    "foresight_en": "Foresight accompanies you from official registration and congress invitation letter issuance to organizing all Schengen visa documents."
+    "foresight_en": "Foresight accompanies you from official registration and congress invitation letter issuance to organizing all Schengen visa documents.",
+    "posted": false
   },
   {
     "id": "iscoms-2027",
@@ -507,7 +518,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای کۆنگرەی هۆڵەندا",
     "foresight_title_en": "Foresight Support for Netherlands Congress Visa",
     "foresight_ku": "فۆرسایت لە هەنگاوی ناونووسین و وەرگرتنی بانگهێشتنامەی فەرمیی زانکۆی خرۆنینگنەوە تا ئامادەکردنی تەواوی دۆسیەی ڤیزای شنگن یاوەری خوێندکاران و دەرچووان دەکات.",
-    "foresight_en": "Foresight guides students and graduates from registration and University of Groningen invitation retrieval to full Schengen visa dossier preparation."
+    "foresight_en": "Foresight guides students and graduates from registration and University of Groningen invitation retrieval to full Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "eshg-2027",
@@ -549,7 +561,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئەم کۆنفرانسە زانستییە",
     "foresight_title_en": "Foresight Support for This Scientific Conference Visa",
     "foresight_ku": "بەشداریکردن لە ESHG بە بانگهێشتنامەی فەرمیی هۆڵەندا متمانەیەکی بەرز بە دۆسیەکەت دەبەخشێت؛ فۆرسایت سەرجەم ڕێکارەکان تا وەرگرتنی ڤیزای شنگن جێبەجێ دەکات.",
-    "foresight_en": "Participating in ESHG with an official Dutch invitation lends high credibility to your file; Foresight executes all procedures until Schengen visa issuance."
+    "foresight_en": "Participating in ESHG with an official Dutch invitation lends high credibility to your file; Foresight executes all procedures until Schengen visa issuance.",
+    "posted": false
   },
   {
     "id": "eos-2027",
@@ -591,7 +604,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای نەمسا",
     "foresight_title_en": "Foresight Supervision for Austrian Visa",
     "foresight_ku": "فۆرسایت هەموو هەنگاوەکانی تۆمارکردنی فەرمی، وەرگرتنی بانگهێشتنامەی کۆنگرەکە لە نەمسا و ئامادەکردنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگن ئەنجام دەدات.",
-    "foresight_en": "Foresight performs all steps of official registration, Austrian congress invitation retrieval, and complete Schengen visa file preparation."
+    "foresight_en": "Foresight performs all steps of official registration, Austrian congress invitation retrieval, and complete Schengen visa file preparation.",
+    "posted": false
   },
   {
     "id": "world-dentistry-2027",
@@ -633,7 +647,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە وەرگرتنی ڤیزای فەڕەنسا",
     "foresight_title_en": "Foresight's Role in Obtaining a French Visa",
     "foresight_ku": "ئەم کۆنگرەیە نامەی ڤیزای فەرمی دەبەخشێت؛ فۆرسایت لە یەکەم هەنگاوی تۆمارکردن و دەرهێنانی بانگهێشتنامەوە تا وەرگرتنی ڤیزای شنگنی فەڕەنسا لەگەڵت دەبێت.",
-    "foresight_en": "This congress grants an official visa letter; Foresight guides you from registration and invitation extraction to obtaining your French Schengen visa."
+    "foresight_en": "This congress grants an official visa letter; Foresight guides you from registration and invitation extraction to obtaining your French Schengen visa.",
+    "posted": false
   },
   {
     "id": "figo-2027",
@@ -675,7 +690,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای کەنەدا",
     "foresight_title_en": "Foresight Supervision for Canada Visa",
     "foresight_ku": "تیمی فۆرسایت تەواوی کارەکانی تۆمارکردن لە کۆنگرەکە، دابینکردنی بانگهێشتنامەی فەرمیی کەنەدا و ڕێکخستنی دۆسیەی ڤیزای کەنەدا بۆ پزیشکان و بەشداربووان جێبەجێ دەکات.",
-    "foresight_en": "Foresight executes full congress registration, official Canadian invitation retrieval, and Canada visa dossier preparation."
+    "foresight_en": "Foresight executes full congress registration, official Canadian invitation retrieval, and Canada visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "barcelona-dental-2027",
@@ -717,7 +733,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئیسپانیا",
     "foresight_title_en": "Foresight Support for Spanish Visa",
     "foresight_ku": "لەگەڵ ڕاگەیاندنی کاتی فەرمی، تیمی فۆرسایت ڕاستەوخۆ پڕۆسەی ناونووسین، وەرگرتنی بانگهێشتنامەی فەرمی و ڕێکخستنی تەواوی دۆسیەی ڤیزای شنگنی ئیسپانیا بۆت جێبەجێ دەکات.",
-    "foresight_en": "Upon official date announcement, Foresight directly handles registration, official invitation letter retrieval, and Spanish Schengen visa dossier preparation."
+    "foresight_en": "Upon official date announcement, Foresight directly handles registration, official invitation letter retrieval, and Spanish Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "youth-changemakers-2026",
@@ -759,7 +776,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای لووتکەی بوداپێست",
     "foresight_title_en": "Foresight Support for Budapest Summit Visa",
     "foresight_ku": "تیمی فۆرسایت لە قۆناغی یەکەمی ناونووسین و پێشکەشکردنی داواکارییەوە تا دەرهێنانی بانگهێشتنامەی فەرمیی لووتکەکە لە هەنگاریا و ئامادەکردنی تەواوی دۆسیەی ڤیزای شنگن، هەموو هەنگاوەکانت بۆ ڕێکدەخات.",
-    "foresight_en": "Foresight organizes every step from initial registration to official Hungarian invitation letter extraction and complete Schengen visa dossier preparation."
+    "foresight_en": "Foresight organizes every step from initial registration to official Hungarian invitation letter extraction and complete Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "bes-2026",
@@ -801,7 +819,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە دەرهێنانی ڤیزای بەریتانیا",
     "foresight_title_en": "Foresight's Role in Obtaining a UK Visa",
     "foresight_ku": "دوای تۆمارکردنی فەرمی و دابینکردنی نامەی پشتگیریی ڤیزا لە کۆمەڵەی ژینگەناسیی بەریتانی، تیمی فۆرسایت سەرجەم بەڵگەنامە پێویستەکان بۆ وەرگرتنی ڤیزای بەریتانیا بە شێوەیەکی پڕۆفیشناڵ ڕێکدەخات.",
-    "foresight_en": "Following official registration and Visa Support Letter issuance from BES, Foresight professionally prepares all required UK Visa documents."
+    "foresight_en": "Following official registration and Visa Support Letter issuance from BES, Foresight professionally prepares all required UK Visa documents.",
+    "posted": false
   },
   {
     "id": "igb-barcelona-2027",
@@ -843,7 +862,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای شنگنی ئیسپانیا",
     "foresight_title_en": "Foresight Support for Spanish Schengen Visa",
     "foresight_ku": "فۆرسایت هەموو قۆناغەکانی ناونووسین، بەدەستهێنانی بانگهێشتنامەی فەرمیی کۆنفرانسەکە و ڕێکخستنی تەواوی فایلی ڤیزای شنگنی ئیسپانیا بۆ بەشداربووان جێبەجێ دەکات.",
-    "foresight_en": "Foresight executes all registration stages, official invitation retrieval, and complete Spanish Schengen visa file organization."
+    "foresight_en": "Foresight executes all registration stages, official invitation retrieval, and complete Spanish Schengen visa file organization.",
+    "posted": true
   },
   {
     "id": "ame-roundup-2027",
@@ -885,7 +905,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕێکخستنی فایلی ڤیزای کەنەدا لەگەڵ فۆرسایت",
     "foresight_title_en": "Organizing Your Canada Visa File with Foresight",
     "foresight_ku": "ئەم کۆنفرانسە نامەی بانگهێشتنامەی فەرمیی باوەڕپێکراو لە لایەن IRCC دەبەخشێت؛ تیمی فۆرسایت لە تۆمارکردنەوە تا ئامادەکردنی تەواوی دۆسیەی ڤیزای کەنەدا یاوەریت دەکات.",
-    "foresight_en": "This conference provides an official IRCC-recognized invitation letter; Foresight guides you from registration to preparing your complete Canada visa dossier."
+    "foresight_en": "This conference provides an official IRCC-recognized invitation letter; Foresight guides you from registration to preparing your complete Canada visa dossier.",
+    "posted": false
   },
   {
     "id": "fieragricola-2027",
@@ -927,7 +948,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای بازرگانیی ئیتاڵیا",
     "foresight_title_en": "Foresight Support for Italian Business Visa",
     "foresight_ku": "فۆرسایت تەواوی ڕێکارەکانی وەرگرتنی باج و بانگهێشتنامەی فەرمیی پێشانگاکە لە ئیتاڵیا ئەنجام دەدات و فایلی ڤیزای شنگن بە بەهێزترین شێوە ئامادە دەکات.",
-    "foresight_en": "Foresight completes all steps for badge and official Italian invitation retrieval and prepares a strong Schengen visa dossier."
+    "foresight_en": "Foresight completes all steps for badge and official Italian invitation retrieval and prepares a strong Schengen visa dossier.",
+    "posted": false
   },
   {
     "id": "ise-2027",
@@ -969,7 +991,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ئاسانکاریی فۆرسایت بۆ ڤیزای ئیسپانیا",
     "foresight_title_en": "Foresight Facilitation for Spanish Visa",
     "foresight_ku": "بەدەستهێنانی بانگهێشتنامەی فەرمی لە پۆرتاڵی ISE و ئامادەکردنی تەواوی دۆسیەی ڤیزای شنگن لەسەر شانی تیمی فۆرسایت دەبێت تا وەرگرتنی ڤیزاکە.",
-    "foresight_en": "Foresight handles official ISE portal invitation retrieval and complete Schengen visa dossier preparation until visa issuance."
+    "foresight_en": "Foresight handles official ISE portal invitation retrieval and complete Schengen visa dossier preparation until visa issuance.",
+    "posted": false
   },
   {
     "id": "cce-2027",
@@ -1011,7 +1034,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای کەنەدا",
     "foresight_title_en": "Foresight Supervision for Canada Visa",
     "foresight_ku": "تیمی فۆرسایت هاوکاریت دەکات لە ڕێکارە پێشوەختەی تۆمارکردن و دەرهێنانی بانگهێشتنامە، لەگەڵ ڕێکخستنی تەواوی دۆسیەی ڤیزای کەنەدا بە شێوەیەکی ورد و باوەڕپێکراو.",
-    "foresight_en": "Foresight assists with early registration, invitation extraction, and accurate, trusted Canada visa dossier preparation."
+    "foresight_en": "Foresight assists with early registration, invitation extraction, and accurate, trusted Canada visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "diplomats-forum-2027",
@@ -1053,7 +1077,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای سویسرا",
     "foresight_title_en": "Foresight Support for Switzerland Visa",
     "foresight_ku": "وەرگرتنی بانگهێشتنامەی فەرمی لە یەکێک لە دیارترین کۆڕبەندە دیپلۆماسییەکان لە جنێڤ بەرزترین چانسی ڤیزات پێ دەدات؛ فۆرسایت تەواوی مامەڵەکەت لە تۆمارکردنەوە تا ڤیزای شنگن بەڕێوەدەبات.",
-    "foresight_en": "Obtaining an official invitation from a premier diplomatic forum in Geneva offers high visa prospects; Foresight manages everything from registration to your Schengen visa."
+    "foresight_en": "Obtaining an official invitation from a premier diplomatic forum in Geneva offers high visa prospects; Foresight manages everything from registration to your Schengen visa.",
+    "posted": true
   },
   {
     "id": "myplant-garden-2027",
@@ -1095,7 +1120,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە ڤیزای پێشانگای میلان",
     "foresight_title_en": "Foresight's Role in the Milan Exhibition Visa",
     "foresight_ku": "فۆرسایت هەنگاو بە هەنگاو تۆمارکردنی فەرمی لە پێشانگاکە، وەرگرتنی بانگهێشتنامەی فەرمیی ئیتاڵیا و تەواوی ڕێکارەکانی ڤیزای شنگن بە سەرکەوتوویی بۆت جێبەجێ دەکات.",
-    "foresight_en": "Foresight executes step-by-step exhibition registration, official Italian invitation retrieval, and complete Schengen visa processing."
+    "foresight_en": "Foresight executes step-by-step exhibition registration, official Italian invitation retrieval, and complete Schengen visa processing.",
+    "posted": false
   },
   {
     "id": "mwc-barcelona-2027",
@@ -1137,7 +1163,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "بەهێزترین پشتگیریی ڤیزای شنگن لەگەڵ فۆرسایت",
     "foresight_title_en": "Strongest Schengen Visa Support with Foresight",
     "foresight_ku": "بانگهێشتنامەی فەرمیی MWC Barcelona بە پشتگیریی حکومەتی ئیسپانیا متمانەیەکی تەواو دەبەخشێت؛ تیمی فۆرسایت سەرجەم ڕێکارەکانی تۆمارکردن تا وەرگرتنی ڤیزای شنگن بەڕێوەدەبات.",
-    "foresight_en": "MWC Barcelona's official invitation backed by the Spanish government provides full credibility; Foresight manages all steps until Schengen visa issuance."
+    "foresight_en": "MWC Barcelona's official invitation backed by the Spanish government provides full credibility; Foresight manages all steps until Schengen visa issuance.",
+    "posted": false
   },
   {
     "id": "world-of-build-2027",
@@ -1179,7 +1206,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای شنگنی پۆڵەندا",
     "foresight_title_en": "Foresight Support for Polish Schengen Visa",
     "foresight_ku": "تیمی فۆرسایت هەموو هەنگاوەکانی تۆمارکردن و دەرهێنانی بانگهێشتنامەی فەرمی لە پێشانگای وارشۆ و ڕێکخستنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگن ئەنجام دەدات.",
-    "foresight_en": "Foresight performs all steps of registration, official Warsaw exhibition invitation retrieval, and complete Schengen visa file organization."
+    "foresight_en": "Foresight performs all steps of registration, official Warsaw exhibition invitation retrieval, and complete Schengen visa file organization.",
+    "posted": false
   },
   {
     "id": "aquatech-2027",
@@ -1221,7 +1249,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای هۆڵەندا",
     "foresight_title_en": "Foresight Support for Netherlands Visa",
     "foresight_ku": "بە بانگهێشتنامەی فەرمیی پێشانگای Aquatech، فۆرسایت تەواوی مامەڵەکەت لە تۆمارکردنەوە تا ئامادەکردنی دۆسیەی یاسایی و وەرگرتنی ڤیزای شنگن سەرپەرشتی دەکات.",
-    "foresight_en": "With the official Aquatech invitation letter, Foresight supervises your entire process from registration to legal dossier preparation and Schengen visa issuance."
+    "foresight_en": "With the official Aquatech invitation letter, Foresight supervises your entire process from registration to legal dossier preparation and Schengen visa issuance.",
+    "posted": false
   },
   {
     "id": "logimat-2027",
@@ -1263,7 +1292,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای ئەڵمانیا",
     "foresight_title_en": "Foresight Supervision for German Visa",
     "foresight_ku": "فۆرسایت هەنگاو بە هەنگاو ناونووسین، وەرگرتنی بانگهێشتنامەی فەرمیی ئەڵمانیا و ڕێکخستنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگنی ئەڵمانیا ئەنجام دەدات.",
-    "foresight_en": "Foresight performs step-by-step registration, official German invitation letter retrieval, and complete Schengen visa file preparation."
+    "foresight_en": "Foresight performs step-by-step registration, official German invitation letter retrieval, and complete Schengen visa file preparation.",
+    "posted": false
   },
   {
     "id": "eya-2027",
@@ -1305,7 +1335,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای هۆڵەندا",
     "foresight_title_en": "Foresight Support for Netherlands Visa",
     "foresight_ku": "تیمی فۆرسایت سەرجەم هەنگاوەکانی پێشکەشکردن، بەدەستهێنانی بانگهێشتنامەی فەرمیی کۆڕبەندەکە و ڕێکخستنی تەواوی مامەڵەی ڤیزای شنگن بۆت جێبەجێ دەکات.",
-    "foresight_en": "Foresight executes all application steps, official assembly invitation retrieval, and complete Schengen visa processing."
+    "foresight_en": "Foresight executes all application steps, official assembly invitation retrieval, and complete Schengen visa processing.",
+    "posted": false
   },
   {
     "id": "pte-world-2027",
@@ -1347,7 +1378,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای هۆڵەندا",
     "foresight_title_en": "Foresight Supervision for Netherlands Visa",
     "foresight_ku": "بەهۆی گرنگیی ئەم کۆنفرانسە پیشەییە لە هۆڵەندا، بانگهێشتنامە فەرمییەکەی چانسێکی بەرز بۆ ڤیزا دەبەخشێت؛ فۆرسایت تەواوی فایلەکەت تا وەرگرتنی ڤیزای شنگن ڕێکدەخات.",
-    "foresight_en": "Due to the high profile of this professional conference in the Netherlands, its official invitation gives strong visa prospects; Foresight organizes your entire Schengen visa file."
+    "foresight_en": "Due to the high profile of this professional conference in the Netherlands, its official invitation gives strong visa prospects; Foresight organizes your entire Schengen visa file.",
+    "posted": false
   },
   {
     "id": "rematec-2027",
@@ -1389,7 +1421,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئەم پێشانگا بازرگانییە",
     "foresight_title_en": "Foresight Support for This Trade Exhibition Visa",
     "foresight_ku": "تیمی فۆرسایت لە یەکەم هەنگاوی تۆمارکردن و دەرهێنانی بانگهێشتنامەی فەرمییەوە تا ئامادەکردنی تەواوی فایل و وەرگرتنی ڤیزای شنگن، سەرپەرشتیی تەواوی مامەڵەکەت دەکات.",
-    "foresight_en": "Foresight supervises your entire application from initial registration and official invitation extraction to complete Schengen visa dossier preparation."
+    "foresight_en": "Foresight supervises your entire application from initial registration and official invitation extraction to complete Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "salone-del-mobile-2027",
@@ -1431,7 +1464,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە وەرگرتنی ڤیزای شنگنی ئیتاڵیا",
     "foresight_title_en": "Foresight's Role in Obtaining an Italian Schengen Visa",
     "foresight_ku": "فۆرسایت هەموو هەنگاوەکانی تۆمارکردن و بەدەستهێنانی بانگهێشتنامەی فەرمیی پێشانگای میلان و ڕێکخستنی تەواوی دۆسیەی ڤیزای شنگن بۆ بازرگانان و دیزاینەران جێبەجێ دەکات.",
-    "foresight_en": "Foresight executes all steps of registration, official Milan exhibition invitation retrieval, and complete Schengen visa dossier organization for traders and designers."
+    "foresight_en": "Foresight executes all steps of registration, official Milan exhibition invitation retrieval, and complete Schengen visa dossier organization for traders and designers.",
+    "posted": false
   },
   {
     "id": "intermat-2027",
@@ -1473,7 +1507,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای فەڕەنسا",
     "foresight_title_en": "Foresight Supervision for French Visa",
     "foresight_ku": "فۆرسایت هەموو ڕێکارەکانی تۆمارکردن، وەرگرتنی بانگهێشتنامەی فەرمی لە پاریس و ئامادەکردنی تەواوی فایلی ڤیزای شنگنی فەڕەنسا بۆ بەشداربووان بەڕێوەدەبات.",
-    "foresight_en": "Foresight manages all registration procedures, official Paris invitation letter retrieval, and complete French Schengen visa file preparation."
+    "foresight_en": "Foresight manages all registration procedures, official Paris invitation letter retrieval, and complete French Schengen visa file preparation.",
+    "posted": false
   },
   {
     "id": "anga-com-2027",
@@ -1515,7 +1550,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "ڕۆڵی فۆرسایت لە ڤیزای ئەڵمانیا",
     "foresight_title_en": "Foresight's Role in German Visas",
     "foresight_ku": "تیمی فۆرسایت تەواوی کارەکانی تۆمارکردن، دەرهێنانی بانگهێشتنامەی فەرمی لە ئەڵمانیا و ڕێکخستنی فایلی ڤیزای شنگن بە شێوەیەکی پڕۆفیشناڵ ئەنجام دەدات.",
-    "foresight_en": "Foresight professionally handles all registration steps, official German invitation letter extraction, and Schengen visa file preparation."
+    "foresight_en": "Foresight professionally handles all registration steps, official German invitation letter extraction, and Schengen visa file preparation.",
+    "posted": false
   },
   {
     "id": "feuertrutz-2027",
@@ -1557,7 +1593,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئەڵمانیا",
     "foresight_title_en": "Foresight Support for German Visa",
     "foresight_ku": "تیمی فۆرسایت تەواوی ڕێکارەکانی تۆمارکردن، بەدەستهێنانی بانگهێشتنامەی فەرمیی پێشانگاکە لە نورنبرێگ و ڕێکخستنی فایلی ڤیزای شنگنی ئەڵمانیا بە ئەستۆ دەگرێت.",
-    "foresight_en": "Foresight takes responsibility for all registration steps, official Nuremberg exhibition invitation retrieval, and German Schengen visa file organization."
+    "foresight_en": "Foresight takes responsibility for all registration steps, official Nuremberg exhibition invitation retrieval, and German Schengen visa file organization.",
+    "posted": false
   },
   {
     "id": "rt-stuttgart-2027",
@@ -1599,7 +1636,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای ئەڵمانیا",
     "foresight_title_en": "Foresight Support for German Visa",
     "foresight_ku": "تیمی فۆرسایت تەواوی ڕێکارەکانی تۆمارکردن لە پۆرتالی Messe Stuttgart، وەرگرتنی بانگهێشتنامەی فەرمی و ئامادەکردنی دۆسیەی ڤیزای شنگنی ئەڵمانیا بە ئەستۆ دەگرێت.",
-    "foresight_en": "Foresight manages all registration steps via Messe Stuttgart, official invitation letter retrieval, and complete German Schengen visa dossier preparation."
+    "foresight_en": "Foresight manages all registration steps via Messe Stuttgart, official invitation letter retrieval, and complete German Schengen visa dossier preparation.",
+    "posted": false
   },
   {
     "id": "provada-2027",
@@ -1641,7 +1679,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "سەرپەرشتیی فۆرسایت بۆ ڤیزای هۆڵەندا",
     "foresight_title_en": "Foresight Supervision for Netherlands Visa",
     "foresight_ku": "فۆرسایت هەموو هەنگاوەکانی تۆمارکردن لە پێشانگای PROVADA، وەرگرتنی بانگهێشتنامەی فەرمی لە ئەمستەردام و ڕێکخستنی تەواوی فایلەکەت بۆ وەرگرتنی ڤیزای شنگن ئەنجام دەدات.",
-    "foresight_en": "Foresight completes all PROVADA registration steps, official invitation retrieval in Amsterdam, and full Schengen visa file organization."
+    "foresight_en": "Foresight completes all PROVADA registration steps, official invitation retrieval in Amsterdam, and full Schengen visa file organization.",
+    "posted": false
   },
   {
     "id": "gitex-italy-2027",
@@ -1693,7 +1732,8 @@ var FORESIGHT_EVENTS = [
     "foresight_title_ku": "پشتگیریی فۆرسایت بۆ ڤیزای شنگنی ئیتاڵیا",
     "foresight_title_en": "Foresight Support for Italian Schengen Visa",
     "foresight_ku": "تیمی فۆرسایت هەموو هەنگاوەکانی تۆمارکردنی فەرمی لە پێشانگای GITEX Italy، دابینکردنی تکت و نامەی بانگهێشتنامە و ڕێکخستنی تەواوی فایلەکەت بۆ ڤیزای شنگنی ئیتاڵیا ئەنجام دەدات.",
-    "foresight_en": "Foresight handles official GITEX Italy registration, pass and invitation arrangements, and complete Italian Schengen visa dossier preparation."
+    "foresight_en": "Foresight handles official GITEX Italy registration, pass and invitation arrangements, and complete Italian Schengen visa dossier preparation.",
+    "posted": false
   }
 ];
 
